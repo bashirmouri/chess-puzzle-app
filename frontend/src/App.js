@@ -11,9 +11,11 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div style={{ textAlign: 'center', padding: '20px' }}>
       <h1>Daily Chess Puzzle</h1>
-      <Chessboard position={fen} />
+      <div style={{ display: 'inline-block' }}>
+        <Chessboard position={fen} boardWidth={400} />
+      </div>
     </div>
   );
 }
