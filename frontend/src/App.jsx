@@ -60,11 +60,13 @@ function App() {
           <div className="flex flex-col items-center space-y-6">
             {/* Chessboard */}
             <div className="flex justify-center">
-              <Chessboard
-                position={game.fen()}
-                onPieceDrop={onDrop}
-                boardWidth={500}
-              />
+              <div style={{ width: "500px", height: "500px" }}>
+                <Chessboard
+                  position={game.fen()}
+                  onPieceDrop={onDrop}
+                  boardWidth={500}
+                />
+              </div>
             </div>
 
             {/* Instructions */}
