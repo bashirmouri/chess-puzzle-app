@@ -8,9 +8,10 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [game, setGame] = useState(new Chess());
+  const [solution, setSolution] = useState("");
 
   function onDrop(sourceSquare, targetSquare) {
-    const gameCopy = new Chess(game.fen());
+    const gameCopy = new Chess(fen);
     const move = gameCopy.move({
       from: sourceSquare,
       to: targetSquare,
@@ -19,15 +20,29 @@ function App() {
 
     if (move === null) return false; // invalid move
 
-    setGame(gameCopy);
-    return true;
+    const playerMove = move.san;
+    console.log("Player move:", playerMove, "Expected move:", solution);
+
+    if(playerMove === solution){
+      const newFen = gameCopy.fen();
+      setFen(newFen); // ✅ Update FEN for board to re-render
+      return true;
+    }
+
+    else {
+    alert("Incorrect move. Try again!");
+    return false;
+  }
+
   }
 
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/puzzle/today")
       .then((res) => {
+        console.log("API response FEN:", res.data.fen); //check fen
         setFen(res.data.fen);
+        setSolution(res.data.solution_move);
         setLoading(false);
       })
       .catch(() => {
@@ -62,7 +77,7 @@ function App() {
             <div className="flex justify-center">
               <div style={{ width: "500px", height: "500px" }}>
                 <Chessboard
-                  position={game.fen()}
+                  position={fen}
                   onPieceDrop={onDrop}
                   boardWidth={500}
                 />

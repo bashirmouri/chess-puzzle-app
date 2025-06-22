@@ -8,9 +8,15 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/api/puzzle/today', async (req, res) => {
-  const today = new Date().toISOString().split('T')[0];
-  const result = await pool.query('SELECT * FROM puzzles WHERE puzzle_date = $1', [today]);
-  res.json(result.rows[0]);
+
+  try{
+    const today = new Date().toISOString().split('T')[0];
+    const result = await pool.query('SELECT * FROM puzzles');
+    console.log(today,result)
+    res.status(200).json(result.rows[0]);
+  }catch(err){
+    console.error(err)
+  }
 });
 
 const PORT = process.env.PORT || 5000;
