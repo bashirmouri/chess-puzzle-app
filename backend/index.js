@@ -7,13 +7,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/puzzle/today', async (req, res) => {
-
+app.get('/api/puzzle/today/:numberOfRow', async (req, res) => { // todo: add numberOfRow in uri
+  const numberOfRow = req.params.numberOfRow;
+  console.log('nub of row: ',numberOfRow)
   try{
     const today = new Date().toISOString().split('T')[0];
-    const result = await pool.query('SELECT * FROM puzzles');
+    const result = await pool.query('SELECT * FROM puzzles ORDER BY id');
     console.log(today,result)
-    res.status(200).json(result.rows[0]);
+    res.status(200).json(result.rows[numberOfRow]);
   }catch(err){
     console.error(err)
   }
