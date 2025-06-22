@@ -30,7 +30,9 @@ function App() {
     }
 
     else {
-    alert("Incorrect move. Try again!");
+    const audio = new Audio("/wrong_sound.wav");
+     audio.play().catch((err) => console.warn("Audio blocked:", err));
+    //alert("Incorrect move. Try again!");
     return false;
   }
 
@@ -90,10 +92,7 @@ function App() {
             </h2>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-transform hover:-translate-y-1">
-                Submit Solution
-              </button>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">  
               <button className="bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-xl border border-white/30 hover:border-white/50">
                 Get Hint
               </button>
