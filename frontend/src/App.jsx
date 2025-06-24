@@ -27,9 +27,13 @@ function App() {
     if (playerMove === solution) {
       const newFen = gameCopy.fen();
       setFen(newFen); // ✅ Update FEN for board to re-render
-      alert("Correct move. Go to next puzzle");
+      const audio = new Audio("/puzzle_correct.mp3");
+      audio.play().catch((err) => console.warn("Audio blocked:", err));
+      setTimeout(() => {
+        goToNextCombination();
+      }, 1000); // wait 1 second for sound effect to play
       return true;
-      
+      return true;
     } else {
       const audio = new Audio("/wrong_sound.wav");
       audio.play().catch((err) => console.warn("Audio blocked:", err));
@@ -41,7 +45,11 @@ function App() {
   const goToNextCombination = () => {
     setNumberOfRow((prev) => prev + 1);
   };
-  
+
+  const goToPreviousCombination = () => {
+    setNumberOfRow((prev) => prev - 1);
+  };
+
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/puzzle/today/${numberOfRow}`)
@@ -55,7 +63,7 @@ function App() {
         setError("Failed to load puzzle.");
         setLoading(false);
       });
-  }, [goToNextCombination]);
+  }, [numberOfRow]);
 
   return (
     <div className="h-screen w-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white flex flex-col">
@@ -96,7 +104,13 @@ function App() {
             </h2>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <div className="flex flex-row justify-between items-center w-full max-w-[500px] mx-auto px-4">
+              <button
+                className="bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-xl border border-white/30 hover:border-white/50"
+                onClick={goToPreviousCombination}
+              >
+                Previous
+              </button>
               <button
                 className="bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-xl border border-white/30 hover:border-white/50"
                 onClick={goToNextCombination}
@@ -112,16 +126,16 @@ function App() {
       <div className="py-8 px-4 bg-white/5 backdrop-blur-sm border-t border-white/10">
         <div className="flex flex-wrap justify-center gap-6 text-center">
           <div className="flex-1 min-w-[200px] max-w-[240px] bg-white/10 p-6 rounded-2xl border border-white/10">
-            <div className="text-3xl font-bold mb-2">1,247</div>
-            <div className="text-slate-300">Puzzles Solved</div>
+            <div className="text-3xl font-bold mb-2">00:00</div>
+            <div className="text-slate-300">Time</div>
           </div>
           <div className="flex-1 min-w-[200px] max-w-[240px] bg-white/10 p-6 rounded-2xl border border-white/10">
-            <div className="text-3xl font-bold mb-2">87%</div>
-            <div className="text-slate-300">Success Rate</div>
+            <div className="text-3xl font-bold mb-2">5</div>
+            <div className="text-slate-300">Number of Tries</div>
           </div>
           <div className="flex-1 min-w-[200px] max-w-[240px] bg-white/10 p-6 rounded-2xl border border-white/10">
-            <div className="text-3xl font-bold mb-2">42</div>
-            <div className="text-slate-300">Streak</div>
+            <div className="text-3xl font-bold mb-2">12</div>
+            <div className="text-slate-300">Puzzle Number</div>
           </div>
         </div>
       </div>
