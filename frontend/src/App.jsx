@@ -10,6 +10,9 @@ function App() {
   const [game, setGame] = useState(new Chess());
   const [solution, setSolution] = useState("");
   const [numberOfRow, setNumberOfRow] = useState(0);
+  const [time, setTime] = useState(0);
+  const [tries, setTries] = useState(0);
+  const [puzzleNumber, setPuzzleNumber] = useState(1);
 
   function onDrop(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
@@ -27,19 +30,35 @@ function App() {
     if (playerMove === solution) {
       const newFen = gameCopy.fen();
       setFen(newFen); // ✅ Update FEN for board to re-render
+
+      //footer logic
+      setTries(0);
+      setTime(0);
+
+      // sound
       const audio = new Audio("/puzzle_correct.mp3");
       audio.play().catch((err) => console.warn("Audio blocked:", err));
       setTimeout(() => {
         goToNextCombination();
       }, 1000); // wait 1 second for sound effect to play
       return true;
-      return true;
     } else {
+      setTries((prev) => prev + 1);
+
+      //sound
       const audio = new Audio("/wrong_sound.wav");
       audio.play().catch((err) => console.warn("Audio blocked:", err));
       //alert("Incorrect move. Try again!");
       return false;
     }
+  }
+
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const secs = (seconds % 60).toString().padStart(2, "0");
+    return `${minutes}:${secs}`;
   }
 
   const goToNextCombination = () => {
@@ -63,6 +82,13 @@ function App() {
         setError("Failed to load puzzle.");
         setLoading(false);
       });
+  }, [numberOfRow]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime((prev) => prev + 1);
+    }, 1000);
+    return () => clearInterval(interval);
   }, [numberOfRow]);
 
   return (
@@ -126,15 +152,15 @@ function App() {
       <div className="py-8 px-4 bg-white/5 backdrop-blur-sm border-t border-white/10">
         <div className="flex flex-wrap justify-center gap-6 text-center">
           <div className="flex-1 min-w-[200px] max-w-[240px] bg-white/10 p-6 rounded-2xl border border-white/10">
-            <div className="text-3xl font-bold mb-2">00:00</div>
+            <div className="text-3xl font-bold mb-2">{formatTime(time)}</div>
             <div className="text-slate-300">Time</div>
           </div>
           <div className="flex-1 min-w-[200px] max-w-[240px] bg-white/10 p-6 rounded-2xl border border-white/10">
-            <div className="text-3xl font-bold mb-2">5</div>
+            <div className="text-3xl font-bold mb-2">{tries}</div>
             <div className="text-slate-300">Number of Tries</div>
           </div>
           <div className="flex-1 min-w-[200px] max-w-[240px] bg-white/10 p-6 rounded-2xl border border-white/10">
-            <div className="text-3xl font-bold mb-2">12</div>
+            <div className="text-3xl font-bold mb-2">{numberOfRow + 1}</div>
             <div className="text-slate-300">Puzzle Number</div>
           </div>
         </div>
