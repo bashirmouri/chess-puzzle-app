@@ -12,7 +12,9 @@ function App() {
   const [numberOfRow, setNumberOfRow] = useState(0);
   const [time, setTime] = useState(0);
   const [tries, setTries] = useState(0);
-  const [puzzleNumber, setPuzzleNumber] = useState(1);
+  const [solutionMoves, setSolutionMoves] = useState([]); // full sequence
+  const [currentStep, setCurrentStep] = useState(0); // which move we're expecting next
+
 
   function onDrop(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
@@ -22,27 +24,52 @@ function App() {
       promotion: "q", // auto-promote to queen
     });
 
-    if (move === null) return false; // invalid move
+    if (move === null) return false; // illegal move
+
+    //setFen(gameCopy.fen()); for future use if I want to make wrong move stay
 
     const playerMove = move.san;
-    console.log("Player move:", playerMove, "Expected move:", solution);
+    
+    console.log("Player move:", playerMove, "Expected move:", solutionMoves[currentStep]);
 
-    if (playerMove === solution) {
+    if (playerMove === solutionMoves[currentStep]) {
+    const nextStep = currentStep + 1;
+    setCurrentStep(nextStep);
+      
+      // last correct move
+      if (nextStep === solutionMoves.length) {
+
       const newFen = gameCopy.fen();
       setFen(newFen); // ✅ Update FEN for board to re-render
-
-      //footer logic
-      setTries(0);
-      setTime(0);
-
+      
       // sound
       const audio = new Audio("/puzzle_correct.mp3");
       audio.play().catch((err) => console.warn("Audio blocked:", err));
+      
       setTimeout(() => {
         goToNextCombination();
+        setTries(0);
+        setTime(0);
+        setCurrentStep(0);
       }, 1000); // wait 1 second for sound effect to play
+
+
       return true;
-    } else {
+    }
+    const opponentMoves = gameCopy.moves();
+    if (opponentMoves.length > 0) {
+      setTimeout(() => {
+      gameCopy.move(opponentMoves[0]);
+      setFen(gameCopy.fen()); 
+      }, 600); // basic: just pick first legal move
+    }
+
+    setFen(gameCopy.fen());
+    return true;
+  
+    } 
+
+    else {
       setTries((prev) => prev + 1);
 
       //sound
@@ -75,6 +102,8 @@ function App() {
       .then((res) => {
         console.log("API response FEN:", res.data.fen); //check fen
         setFen(res.data.fen);
+        setSolutionMoves(res.data.solution_moves);
+        setCurrentStep(0);
         setSolution(res.data.solution_move);
         setLoading(false);
       })

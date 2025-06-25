@@ -11,9 +11,8 @@ app.get('/api/puzzle/today/:numberOfRow', async (req, res) => { // todo: add num
   const numberOfRow = req.params.numberOfRow;
   console.log('nub of row: ',numberOfRow)
   try{
-    const today = new Date().toISOString().split('T')[0];
     const result = await pool.query('SELECT * FROM puzzles ORDER BY id');
-    console.log(today,result)
+    console.log(JSON.stringify(result.rows[numberOfRow], null, 2))
     res.status(200).json(result.rows[numberOfRow]);
   }catch(err){
     console.error(err)
