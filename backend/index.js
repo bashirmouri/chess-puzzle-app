@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/puzzle/today/:numberOfRow', async (req, res) => { // todo: add numberOfRow in uri
+app.get('/api/puzzle/today/:numberOfRow', async (req, res) => { 
   const numberOfRow = req.params.numberOfRow;
   console.log('nub of row: ',numberOfRow)
   try{

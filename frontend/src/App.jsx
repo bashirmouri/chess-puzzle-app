@@ -12,7 +12,7 @@ function App() {
   const [numberOfRow, setNumberOfRow] = useState(0);
   const [time, setTime] = useState(0);
   const [tries, setTries] = useState(0);
-  const [solutionMoves, setSolutionMoves] = useState([]); // full sequence
+  const [solutionMoves, setSolutionMoves] = useState([]); // for full sequence
   const [currentStep, setCurrentStep] = useState(0); // which move we're expecting next
 
 
@@ -28,9 +28,10 @@ function App() {
 
     //setFen(gameCopy.fen()); for future use if I want to make wrong move stay
 
-    const playerMove = move.san;
+    const playerMove = move.san; // translates move into standard notation
     
     console.log("Player move:", playerMove, "Expected move:", solutionMoves[currentStep]);
+    // remove this during export
 
     if (playerMove === solutionMoves[currentStep]) {
     const nextStep = currentStep + 1;
@@ -40,7 +41,7 @@ function App() {
       if (nextStep === solutionMoves.length) {
 
       const newFen = gameCopy.fen();
-      setFen(newFen); // ✅ Update FEN for board to re-render
+      setFen(newFen); //  Update fen for board to re-render
       
       // sound
       const audio = new Audio("/puzzle_correct.mp3");
@@ -56,7 +57,8 @@ function App() {
 
       return true;
     }
-    const opponentMoves = gameCopy.moves();
+
+    const opponentMoves = gameCopy.moves(); // gets all legal moves
     if (opponentMoves.length > 0) {
       setTimeout(() => {
       gameCopy.move(opponentMoves[0]);
@@ -99,7 +101,7 @@ function App() {
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/puzzle/today/${numberOfRow}`)
-      .then((res) => {
+      .then((res) => { // response from server
         console.log("API response FEN:", res.data.fen); //check fen
         setFen(res.data.fen);
         setSolutionMoves(res.data.solution_moves);
@@ -115,8 +117,8 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime((prev) => prev + 1);
-    }, 1000);
+      setTime((prev) => prev + 1); //increments time by 1
+    }, 1000); //every 1 sec
     return () => clearInterval(interval);
   }, [numberOfRow]);
 
@@ -129,6 +131,7 @@ function App() {
       </div>
 
       {/* Main Puzzle Section */}
+      <div className="min-h-screen flex items-center justify-center">
       <div className="backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-xl">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-[400px] w-[400px]">
@@ -140,6 +143,7 @@ function App() {
             <div className="text-red-400 text-6xl mb-4">⚠</div>
             <p className="text-lg">{error}</p>
           </div>
+          
         ) : (
           <div className="flex flex-col items-center space-y-6">
             {/* Chessboard */}
@@ -175,6 +179,7 @@ function App() {
             </div>
           </div>
         )}
+      </div>
       </div>
 
       {/* Footer */}
