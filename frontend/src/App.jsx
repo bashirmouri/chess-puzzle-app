@@ -155,10 +155,10 @@ function App() {
         {/* Time Container */}
         <div
           style={{
-            backgroundColor: "#D2691E",
+            backgroundColor: "#5e3a20ff",
             padding: "15px 25px",
             borderRadius: "15px",
-            color: "white",
+            color: "#fdc298ff",
             fontWeight: "bold",
             fontSize: "18px",
             flexShrink: 0, // Prevent shrinking
@@ -170,14 +170,14 @@ function App() {
         {/* Turn B (Circular Button) */}
         <div
           style={{
-            backgroundColor: "#D2691E",
+            backgroundColor: "#5e3a20ff",
             width: "60px",
             height: "60px",
             borderRadius: "50%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "white",
+            color: "#fdc298ff",
             fontWeight: "bold",
             cursor: "pointer",
             flexShrink: 0, // Prevent shrinking
@@ -189,10 +189,10 @@ function App() {
         {/* Number of Tries */}
         <div
           style={{
-            backgroundColor: "#D2691E",
+            backgroundColor: "#5e3a20ff",
             padding: "15px 25px",
             borderRadius: "15px",
-            color: "white",
+            color: "#fdc298ff",
             fontWeight: "bold",
             fontSize: "18px",
             flexShrink: 0, // Prevent shrinking
@@ -204,10 +204,10 @@ function App() {
         {/* Puzzle Number */}
         <div
           style={{
-            backgroundColor: "#D2691E",
+            backgroundColor: "#5e3a20ff",
             padding: "15px 25px",
             borderRadius: "15px",
-            color: "white",
+            color: "#fdc298ff",
             fontWeight: "bold",
             fontSize: "18px",
             flexShrink: 0, // Prevent shrinking
@@ -220,7 +220,7 @@ function App() {
       <div style={{
         display: "flex",
         justifyContent: "space-around",
-        border: "2px solid green",
+        //border: "2px solid green",
         width: "100%" // makes it stretch to full screen
       }}>
       <div
@@ -230,7 +230,12 @@ function App() {
         }}
       >
         <button onClick={goToPreviousCombination}
-        style={{alignSelf: "flex-end"}}>Previous</button> 
+        style={{
+          alignSelf: "flex-end",
+          color: "#5e3a20ff",
+          backgroundColor: "#fdc298ff",
+          fontWeight: "bold"
+          }}>Previous</button> 
       </div>
       {/* Chessboard area - this will take remaining space */}
       <div
@@ -249,7 +254,12 @@ function App() {
        
       }}>
         <button onClick={goToNextCombination}
-        style={{alignSelf: "flex-end"}}>
+        style={{
+          alignSelf: "flex-end",
+          color: "#5e3a20ff",
+          backgroundColor: "#fdc298ff",
+          fontWeight: "bold"
+          }}>
           Next
         </button>
       </div>
