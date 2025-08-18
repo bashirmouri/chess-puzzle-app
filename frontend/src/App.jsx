@@ -60,6 +60,8 @@ function App() {
         return true;
       }
 
+      const audio = new Audio("/move-self.mp3");
+      audio.play().catch((err) => console.warn("Audio blocked:", err));
       const opponentMoves = gameCopy.moves(); // gets all legal moves
       if (opponentMoves.length > 0) {
         setTimeout(() => {
