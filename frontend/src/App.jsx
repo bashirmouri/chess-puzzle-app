@@ -9,7 +9,7 @@ function App() {
   const [error, setError] = useState(null);
   const [game, setGame] = useState(new Chess());
   const [solution, setSolution] = useState("");
-  const [numberOfRow, setNumberOfRow] = useState(0);
+  const [puzzleId, setpuzzleId] = useState(1);
   const [time, setTime] = useState(0);
   const [tries, setTries] = useState(0);
   const [solutionMoves, setSolutionMoves] = useState([]); // for full sequence
@@ -62,6 +62,7 @@ function App() {
 
       const audio = new Audio("/move-self.mp3");
       audio.play().catch((err) => console.warn("Audio blocked:", err));
+
       const opponentMoves = gameCopy.moves(); // gets all legal moves
       if (opponentMoves.length > 0) {
         setTimeout(() => {
@@ -92,16 +93,16 @@ function App() {
   }
 
   const goToNextCombination = () => {
-    setNumberOfRow((prev) => prev + 1);
+    setpuzzleId((prev) => prev + 1);
   };
 
   const goToPreviousCombination = () => {
-    setNumberOfRow((prev) => prev - 1);
+    setpuzzleId((prev) => prev - 1);
   };
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/puzzle/today/${numberOfRow}`)
+      .get(`http://localhost:5000/api/puzzle/today/${puzzleId}`)
       .then((res) => {
         // response from server
         console.log("API response FEN:", res.data.fen); //check fen
@@ -115,19 +116,39 @@ function App() {
         setError("Failed to load puzzle.");
         setLoading(false);
       });
-  }, [numberOfRow]);
+  }, [puzzleId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setTime((prev) => prev + 1); //increments time by 1
     }, 1000); //every 1 sec
     return () => clearInterval(interval);
-  }, [numberOfRow]);
+  }, [puzzleId]);
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          width: "100vw",
+          backgroundColor: "black",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          color: "white",
+          fontSize: "24px",
+          fontWeight: "bold",
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div
       style={{
-        border: "2px solid red",
+        //border: "2px solid red",
         height: "100vh",
         width: "100vw",
         backgroundImage: "url(background.jpg)",
@@ -145,7 +166,7 @@ function App() {
       {/* Top Stats Row */}
       <div
         style={{
-          border: "2px solid red",
+          //border: "2px solid red",
           display: "flex",
           justifyContent: "space-evenly", // Spreads items across full width
           alignItems: "center",
@@ -215,57 +236,66 @@ function App() {
             flexShrink: 0, // Prevent shrinking
           }}
         >
-          Puzzle: {numberOfRow + 1}
+          Puzzle: {puzzleId}
         </div>
       </div>
 
-      <div style={{
-        display: "flex",
-        justifyContent: "space-around",
-        //border: "2px solid green",
-        width: "100%" // makes it stretch to full screen
-      }}>
-      <div
-        style={{
-          border: "2px solid red",
-          display: "flex" // align self works only for one child in flexbox
-        }}
-      >
-        <button onClick={goToPreviousCombination}
-        style={{
-          alignSelf: "flex-end",
-          color: "#5e3a20ff",
-          backgroundColor: "#fdc298ff",
-          fontWeight: "bold"
-          }}>Previous</button> 
-      </div>
-      {/* Chessboard area - this will take remaining space */}
       <div
         style={{
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: "space-around",
+          //border: "2px solid green",
+          width: "100%", // makes it stretch to full screen
         }}
       >
-        <Chessboard position={fen} onPieceDrop={onDrop} boardWidth={500} />
-      </div>
+        <div
+          style={{
+            //border: "2px solid red",
+            display: "flex", // align self works only for one child in flexbox
+          }}
+        >
+          <button
+            onClick={goToPreviousCombination}
+            style={{
+              alignSelf: "flex-end",
+              color: "#5e3a20ff",
+              backgroundColor: "#fdc298ff",
+              fontWeight: "bold",
+            }}
+          >
+            Previous
+          </button>
+        </div>
+        {/* Chessboard area - this will take remaining space */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Chessboard position={fen} onPieceDrop={onDrop} boardWidth={500} />
+        </div>
 
-      <div style={{
-        border: "2px solid red",
-        display: "flex",
-       
-      }}>
-        <button onClick={goToNextCombination}
-        style={{
-          alignSelf: "flex-end",
-          color: "#5e3a20ff",
-          backgroundColor: "#fdc298ff",
-          fontWeight: "bold"
-          }}>
-          Next
-        </button>
+        <div
+          style={{
+            //border: "2px solid red",
+            display: "flex",
+          }}
+        >
+          <button
+            onClick={goToNextCombination}
+            style={{
+              alignSelf: "flex-end",
+              color: "#5e3a20ff",
+              backgroundColor: "#fdc298ff",
+              fontWeight: "bold",
+            }}
+          >
+            Next
+          </button>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
