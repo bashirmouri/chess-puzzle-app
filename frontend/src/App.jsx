@@ -14,6 +14,10 @@ function App() {
   const [tries, setTries] = useState(0);
   const [solutionMoves, setSolutionMoves] = useState([]); // for full sequence
   const [currentStep, setCurrentStep] = useState(0); // which move we're expecting next
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0); // optional streak system
+
+  // Add scoreboard with streaks !!!
 
   function onDrop(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
@@ -50,6 +54,22 @@ function App() {
         const audio = new Audio("/puzzle_correct.mp3");
         audio.play().catch((err) => console.warn("Audio blocked:", err));
 
+        // ✅ Calculate score
+        let points = 100; // base points
+        points -= tries * 10; // penalty for mistakes
+
+        if (time < 7) points += 50;
+        else if (time < 30) points += 25;
+
+        if (tries === 0) {
+          setStreak((prev) => prev + 1);
+          points += streak * 20; // streak bonus grows
+        } else {
+          setStreak(0); // reset streak if mistakes were made
+        }
+
+        setScore((prev) => prev + points);
+
         setTimeout(() => {
           goToNextCombination();
           setTries(0);
@@ -60,15 +80,28 @@ function App() {
         return true;
       }
 
-      const audio = new Audio("/move-self.mp3");
-      audio.play().catch((err) => console.warn("Audio blocked:", err));
-
-      const opponentMoves = gameCopy.moves(); // gets all legal moves
+      if (move.captured) {
+        const audio = new Audio("/capture.mp3");
+        audio.play().catch((err) => console.warn("Audio blocked:", err));
+      } else {
+        const audio = new Audio("/move-self.mp3");
+        audio.play().catch((err) => console.warn("Audio blocked:", err));
+      }
+      const opponentMoves = gameCopy.moves({ verbose: true });
       if (opponentMoves.length > 0) {
         setTimeout(() => {
-          gameCopy.move(opponentMoves[0]);
+          const moveObj = opponentMoves[0]; // first legal move
+          gameCopy.move(moveObj);
+
+          if (moveObj.captured) {
+            const audio = new Audio("/capture.mp3");
+            audio.play().catch((err) => console.warn("Audio blocked:", err));
+          } else {
+            const audio = new Audio("/move-self.mp3");
+            audio.play().catch((err) => console.warn("Audio blocked:", err));
+          }
           setFen(gameCopy.fen());
-        }, 600); // basic: just pick first legal move
+        }, 850);
       }
 
       setFen(gameCopy.fen());
@@ -148,14 +181,14 @@ function App() {
   return (
     <div
       style={{
-        //border: "2px solid red",
+        border: "2px solid red",
         height: "100vh",
         width: "100vw",
         backgroundImage: "url(background.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         padding: "20px",
         display: "flex",
         flexDirection: "column",
@@ -166,7 +199,7 @@ function App() {
       {/* Top Stats Row */}
       <div
         style={{
-          //border: "2px solid red",
+          border: "2px solid red",
           display: "flex",
           justifyContent: "space-evenly", // Spreads items across full width
           alignItems: "center",
@@ -190,23 +223,45 @@ function App() {
           Time: {formatTime(time)}
         </div>
 
-        {/* Turn B (Circular Button) */}
+        {/* Streak */}
         <div
           style={{
-            backgroundColor: "#5e3a20ff",
-            width: "60px",
+            backgroundColor: streak > 0 ? "#ff4500" : "#5e3a20ff",
+            minWidth: "100px",
             height: "60px",
-            borderRadius: "50%",
+            borderRadius: "15px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#fdc298ff",
+            color: "#fff",
             fontWeight: "bold",
-            cursor: "pointer",
-            flexShrink: 0, // Prevent shrinking
+            fontSize: "18px",
+            boxShadow:
+              streak > 0 ? "0px 0px 15px 5px rgba(205, 59, 7, 0.66)" : "none",
+            transition: "all 0.3s ease",
           }}
         >
-          Turn B
+          Streak: {streak}
+        </div>
+
+        {/* Score */}
+        <div
+          style={{
+            backgroundColor: "#9158e5ff",
+            minWidth: "120px",
+            height: "60px",
+            borderRadius: "15px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#401c02ff",
+            fontWeight: "bold",
+            fontSize: "18px",
+            boxShadow: "0px 0px 20px 5px rgba(71, 27, 129, 0.7)",
+            transition: "all 0.3s ease",
+          }}
+        >
+          Score: {score}
         </div>
 
         {/* Number of Tries */}
@@ -244,13 +299,13 @@ function App() {
         style={{
           display: "flex",
           justifyContent: "space-around",
-          //border: "2px solid green",
+          border: "2px solid green",
           width: "100%", // makes it stretch to full screen
         }}
       >
         <div
           style={{
-            //border: "2px solid red",
+            border: "2px solid red",
             display: "flex", // align self works only for one child in flexbox
           }}
         >
@@ -279,7 +334,7 @@ function App() {
 
         <div
           style={{
-            //border: "2px solid red",
+            border: "2px solid red",
             display: "flex",
           }}
         >
