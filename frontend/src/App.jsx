@@ -27,7 +27,13 @@ function App() {
       promotion: "q", // auto-promote to queen
     });
 
-    if (move === null) return false; // illegal move
+    if (move === null) {
+        const audio = new Audio("/capture.mp3"); // try to fix sound when illegal
+        audio.play().catch((err) => console.warn("Audio blocked:", err));
+        return false; // illegal move
+    }
+    
+     
 
     //setFen(gameCopy.fen()); for future use if I want to make wrong move stay
 
@@ -64,9 +70,7 @@ function App() {
         if (tries === 0) {
           setStreak((prev) => prev + 1);
           points += streak * 20; // streak bonus grows
-        } else {
-          setStreak(0); // reset streak if mistakes were made
-        }
+        } 
 
         setScore((prev) => prev + points);
 
@@ -107,8 +111,9 @@ function App() {
       setFen(gameCopy.fen());
       return true;
     } else {
-      setTries((prev) => prev + 1);
-
+      setTries((prev) => prev + 1);     
+      setStreak(0); 
+        
       //sound
       const audio = new Audio("/wrong_sound.wav");
       audio.play().catch((err) => console.warn("Audio blocked:", err));
