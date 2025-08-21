@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
+import InstructionsModal from "./components/InstructionsModal";
 
 function App() {
   const [fen, setFen] = useState("");
   const [loading, setLoading] = useState(true);
+  const [gameStarted, setGameStarted] = useState(false);
   const [error, setError] = useState(null);
   const [game, setGame] = useState(new Chess());
   const [solution, setSolution] = useState("");
@@ -17,6 +19,7 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0); // which move we're expecting next
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0); // optional streak system
+  const [showInstructions, setShowInstructions] = useState(true);
 
   // Add scoreboard with streaks !!!
 
@@ -29,12 +32,10 @@ function App() {
     });
 
     if (move === null) {
-        const audio = new Audio("/capture.mp3"); // try to fix sound when illegal
-        audio.play().catch((err) => console.warn("Audio blocked:", err));
-        return false; // illegal move
+      const audio = new Audio("/capture.mp3"); // try to fix sound when illegal
+      audio.play().catch((err) => console.warn("Audio blocked:", err));
+      return false; // illegal move
     }
-    
-     
 
     //setFen(gameCopy.fen()); for future use if I want to make wrong move stay
 
@@ -73,7 +74,7 @@ function App() {
         if (tries === 0) {
           setStreak((prev) => prev + 1);
           points += streak * 20; // streak bonus grows
-        } 
+        }
 
         setScore((prev) => prev + points);
 
@@ -114,9 +115,9 @@ function App() {
       setFen(gameCopy.fen());
       return true;
     } else {
-      setTries((prev) => prev + 1);     
-      setStreak(0); 
-        
+      setTries((prev) => prev + 1);
+      setStreak(0);
+
       //sound
       const audio = new Audio("/wrong_sound.wav");
       audio.play().catch((err) => console.warn("Audio blocked:", err));
@@ -161,11 +162,14 @@ function App() {
   }, [puzzleId]);
 
   useEffect(() => {
+    if (!gameStarted) {
+      return;
+    }
     const interval = setInterval(() => {
       setTime((prev) => prev + 1); //increments time by 1
     }, 1000); //every 1 sec
     return () => clearInterval(interval);
-  }, [puzzleId]);
+  }, [puzzleId, gameStarted]);
 
   if (loading) {
     return (
@@ -205,6 +209,15 @@ function App() {
         alignItems: "center",
       }}
     >
+      {showInstructions && !gameStarted && (
+        <InstructionsModal
+          onClose={() => {
+            setShowInstructions(false);
+            setGameStarted(true);
+          }}
+        />
+      )}
+
       {/* Top Stats Row */}
       <div
         style={{
