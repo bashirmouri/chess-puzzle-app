@@ -13,7 +13,7 @@ app.use(express.json());
     console.log("Requested puzzle id:", puzzleId);
 
     const result = await pool.query(
-      'SELECT fen, solution_moves, turn FROM puzzles WHERE id = $1',
+      'SELECT fen, solution_moves, level FROM puzzles WHERE id = $1',
       [puzzleId]
     ); // $1 to prevent SQL injection
 
