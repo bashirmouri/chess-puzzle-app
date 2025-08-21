@@ -63,7 +63,7 @@ function InstructionsModal({ onClose }) {
             marginBottom: "12px",
           }}
         >
-          Every wrong move: <b>-10 points</b>
+          Every wrong move: <b>-50 points</b>
         </div>
 
         {/* Bonus */}
@@ -86,10 +86,10 @@ function InstructionsModal({ onClose }) {
               paddingLeft: "0", // Removes default left padding
             }}
           >
-            <li>Under 5s → +50</li>
-            <li>Under 10s → +30</li>
-            <li>Under 15s → +20</li>
-            <li>Under 30s → +10</li>
+            <li>Under 5s → <b>+50 points</b></li>
+            <li>Under 10s → <b>+30 points</b></li>
+            <li>Under 15s → <b>+20 points</b></li>
+            <li>Under 30s → <b>+10 points</b></li>
           </ul>
         </div>
 
@@ -102,8 +102,8 @@ function InstructionsModal({ onClose }) {
             marginBottom: "12px",
           }}
         >
-          Solve with <b>no mistakes</b> → <br />
-          Streak +1 and <b>+20 × streak</b> points
+          <b>Perfect Solve!</b>  <br />
+          Get <b>20 points</b> multiplied by your streak
         </div>
 
         {/* Button */}

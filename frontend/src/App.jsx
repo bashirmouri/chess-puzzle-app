@@ -64,7 +64,6 @@ function App() {
 
         // Calculate score
         let points = 100; // base points
-        points -= tries * 10; // penalty for mistakes
 
         if (time < 5) points += 50;
         else if (time < 10) points += 30;
@@ -117,6 +116,11 @@ function App() {
     } else {
       setTries((prev) => prev + 1);
       setStreak(0);
+      if (score - 50 < 0) {
+        setScore(0);
+      } else {
+        setScore(score - 50); // penalty for mistakes
+      }
 
       //sound
       const audio = new Audio("/wrong_sound.wav");
