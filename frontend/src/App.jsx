@@ -13,6 +13,7 @@ function App() {
   const [time, setTime] = useState(0);
   const [tries, setTries] = useState(0);
   const [solutionMoves, setSolutionMoves] = useState([]); // for full sequence
+  const [level, setLevel] = useState(-1);
   const [currentStep, setCurrentStep] = useState(0); // which move we're expecting next
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0); // optional streak system
@@ -60,12 +61,14 @@ function App() {
         const audio = new Audio("/puzzle_correct.mp3");
         audio.play().catch((err) => console.warn("Audio blocked:", err));
 
-        // ✅ Calculate score
+        // Calculate score
         let points = 100; // base points
         points -= tries * 10; // penalty for mistakes
 
-        if (time < 7) points += 50;
-        else if (time < 30) points += 25;
+        if (time < 5) points += 50;
+        else if (time < 10) points += 30;
+        else if (time < 15) points += 20;
+        else if (time < 30) points += 10;
 
         if (tries === 0) {
           setStreak((prev) => prev + 1);
@@ -148,6 +151,7 @@ function App() {
         setSolutionMoves(res.data.solution_moves);
         setCurrentStep(0);
         setSolution(res.data.solution_move);
+        setLevel(res.data.level);
         setLoading(false);
       })
       .catch(() => {
@@ -231,7 +235,7 @@ function App() {
         {/* Streak */}
         <div
           style={{
-            backgroundColor: streak > 0 ? "#ff4500" : "#5e3a20ff",
+            backgroundColor: streak > 0 ? "#e1440bff" : "#5e3a20ff",
             minWidth: "100px",
             height: "60px",
             borderRadius: "15px",
@@ -282,6 +286,20 @@ function App() {
           }}
         >
           Tries: {tries}
+        </div>
+
+        <div
+          style={{
+            backgroundColor: "#5e3a20ff",
+            padding: "15px 25px",
+            borderRadius: "15px",
+            color: "#fdc298ff",
+            fontWeight: "bold",
+            fontSize: "18px",
+            flexShrink: 0, // Prevent shrinking
+          }}
+        >
+          Level: {level}
         </div>
 
         {/* Puzzle Number */}
