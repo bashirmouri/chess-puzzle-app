@@ -39,7 +39,7 @@ function InstructionsModal({ onClose }) {
             marginBottom: "12px",
           }}
         >
-          <b>5 Levels</b> — each with <b>10 puzzles</b>
+          <b>5 Levels</b> - - - each with <b>10 puzzles</b>
         </div>
 
         {/* Base Points */}
@@ -103,7 +103,7 @@ function InstructionsModal({ onClose }) {
           }}
         >
           <b>Perfect Solve!</b>  <br />
-          Get <b>20 points</b> multiplied by your streak
+          Get <b>20 points</b> multiplied by your <b>Streak</b>
         </div>
 
         {/* Button */}

@@ -20,6 +20,8 @@ function App() {
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0); // optional streak system
   const [showInstructions, setShowInstructions] = useState(true);
+  const [previousLevel, setPreviousLevel] = useState(1);
+  const [animateLevel, setAnimateLevel] = useState(false);
 
   // Add scoreboard with streaks !!!
 
@@ -164,6 +166,23 @@ function App() {
         setLoading(false);
       });
   }, [puzzleId]);
+
+  useEffect(() => {
+    let timer;
+    if (level !== previousLevel) {
+      // Only run if level changed
+      setAnimateLevel(true);
+
+      // Turn off after 1s
+      timer = setTimeout(() => setAnimateLevel(false), 1000);
+
+      // Update previousLevel to the new one
+      setPreviousLevel(level);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [level]);
 
   useEffect(() => {
     if (!gameStarted) {
@@ -314,6 +333,11 @@ function App() {
             fontWeight: "bold",
             fontSize: "18px",
             flexShrink: 0, // Prevent shrinking
+            transform: animateLevel ? "scale(1.3)" : "scale(1)",
+            boxShadow: animateLevel
+              ? "0 0 20px 5px rgba(129, 77, 21, 0.8)"
+              : "none",
+            transition: "all 0.5s ease-in-out",
           }}
         >
           Level: {level}
