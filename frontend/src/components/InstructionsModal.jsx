@@ -26,9 +26,20 @@ function InstructionsModal({ onClose }) {
           boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
         }}
       >
-        <h2 style={{ marginBottom: "15px", color: "#5e3a20" }}>
-          <b>Welcome to GoChess!</b>
-        </h2>
+        <div
+          style={{
+            padding: "15px",
+            border: "2px solid #5e3a20",
+            borderRadius: "12px",
+            backgroundColor: "#6fef95ff",
+            display: "inline-block", // keeps the box fit around the text
+            marginBottom: "12px",
+          }}
+        >
+          <h2 style={{ marginBottom: 0, color: "#5e3a20" }}>
+            <b>Welcome to GoChess!</b>
+          </h2>
+        </div>
 
         {/* Levels */}
         <div
@@ -86,10 +97,18 @@ function InstructionsModal({ onClose }) {
               paddingLeft: "0", // Removes default left padding
             }}
           >
-            <li>Under 5s → <b>+50 points</b></li>
-            <li>Under 10s → <b>+30 points</b></li>
-            <li>Under 15s → <b>+20 points</b></li>
-            <li>Under 30s → <b>+10 points</b></li>
+            <li>
+              Under 5s → <b>+50 points</b>
+            </li>
+            <li>
+              Under 10s → <b>+30 points</b>
+            </li>
+            <li>
+              Under 15s → <b>+20 points</b>
+            </li>
+            <li>
+              Under 30s → <b>+10 points</b>
+            </li>
           </ul>
         </div>
 
@@ -102,7 +121,7 @@ function InstructionsModal({ onClose }) {
             marginBottom: "12px",
           }}
         >
-          <b>Perfect Solve!</b>  <br />
+          <b>Perfect Solve!</b> <br />
           Get <b>20 points</b> multiplied by your <b>Streak</b>
         </div>
 
