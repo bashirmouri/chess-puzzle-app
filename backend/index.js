@@ -25,7 +25,7 @@ app.use(express.json());
     }
 
     // log the actual row being sent back
-    console.log("Sending back puzzle:", result.rows[0]);
+    //console.log("Sending back puzzle:", result.rows[0]);
 
     res.status(200).json(result.rows[0]);
   } catch (err) {

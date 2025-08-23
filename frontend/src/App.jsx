@@ -3,6 +3,7 @@ import axios from "axios";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 import InstructionsModal from "./components/InstructionsModal";
+import OutOfBoundsPage from "./components/OutOfBoundsPage";
 
 function App() {
   const [fen, setFen] = useState("");
@@ -22,6 +23,7 @@ function App() {
   const [showInstructions, setShowInstructions] = useState(true);
   const [previousLevel, setPreviousLevel] = useState(1);
   const [animateLevel, setAnimateLevel] = useState(false);
+  const [puzzleNotFound, setPuzzleNotFound] = useState(false);
 
   // Add scoreboard with streaks !!!
 
@@ -148,12 +150,27 @@ function App() {
     setpuzzleId((prev) => prev - 1);
   };
 
+  const handleGoHome = () => {
+    setpuzzleId(1);
+    setPuzzleNotFound(false);
+  };
+
   useEffect(() => {
+    setPuzzleNotFound(false); // Reset on puzzle change
+
     axios
       .get(`http://localhost:5000/api/puzzle/today/${puzzleId}`)
       .then((res) => {
-        // response from server
-        console.log("API response FEN:", res.data.fen); //check fen
+        console.log("API response:", res.data);
+
+        // Check if database returned empty array
+        if (Array.isArray(res.data) && res.data.length === 0) {
+          setPuzzleNotFound(true);
+          setLoading(false);
+          return;
+        }
+
+        // Normal puzzle loading
         setFen(res.data.fen);
         setSolutionMoves(res.data.solution_moves);
         setCurrentStep(0);
@@ -161,8 +178,15 @@ function App() {
         setLevel(res.data.level);
         setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load puzzle.");
+      .catch((err) => {
+        console.log("API error:", err.response?.status);
+        
+        // If it's a 404 error, the puzzle doesn't exist
+        if (err.response?.status === 404) {
+          setPuzzleNotFound(true);
+        } else {
+          setError("Failed to load puzzle.");
+        }
         setLoading(false);
       });
   }, [puzzleId]);
@@ -193,6 +217,10 @@ function App() {
     }, 1000); //every 1 sec
     return () => clearInterval(interval);
   }, [puzzleId, gameStarted]);
+
+  if (puzzleNotFound) {
+    return <OutOfBoundsPage onGoHome={handleGoHome} />;
+  }
 
   if (loading) {
     return (

@@ -12,7 +12,7 @@ function InstructionsModal({ onClose }) {
         justifyContent: "center",
         alignItems: "center",
         zIndex: 1000,
-        padding: "10px",
+        padding: "5px",
       }}
     >
       <div
@@ -50,7 +50,7 @@ function InstructionsModal({ onClose }) {
             marginBottom: "12px",
           }}
         >
-          <b>5 Levels</b> - - - each with <b>10 puzzles</b>
+          You play as <b>white</b> <br /><b>5 Levels</b> - - - each with <b>10 puzzles</b>
         </div>
 
         {/* Base Points */}
@@ -118,7 +118,7 @@ function InstructionsModal({ onClose }) {
             background: "#d0e6ff",
             padding: "12px",
             borderRadius: "12px",
-            marginBottom: "12px",
+            marginBottom: "5px",
           }}
         >
           <b>Perfect Solve!</b> <br />
@@ -129,7 +129,7 @@ function InstructionsModal({ onClose }) {
         <button
           onClick={onClose}
           style={{
-            marginTop: "15px",
+            marginTop: "5px",
             padding: "12px 25px",
             background: "#5e3a20",
             color: "white",
