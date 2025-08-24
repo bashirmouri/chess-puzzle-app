@@ -25,6 +25,7 @@ function PuzzlePage() {
   const [animateLevel, setAnimateLevel] = useState(false); // animation when going through levels
   const [puzzleNotFound, setPuzzleNotFound] = useState(false);
   const [puzzleTransitioning, setPuzzleTransitioning] = useState(false); // to avoid incrementing by 2
+  const [completedPuzzles, setCompletedPuzzles] = useState(new Set());
 
   // Add scoreboard with streaks !!!
 
@@ -68,21 +69,25 @@ function PuzzlePage() {
         audio.play().catch((err) => console.warn("Audio blocked:", err));
 
         // Calculate score
-        let points = 100; // base points
 
-        if (time < 5) points += 50;
-        else if (time < 10) points += 30;
-        else if (time < 15) points += 20;
-        else if (time < 30) points += 10;
+        if (!completedPuzzles.has(puzzleId)) {
+          let points = 100; // base points
 
-        if (tries === 0) {
-          setStreak((prev) => prev + 1);
-          points += streak * 20; // streak bonus grows
+          if (time < 5) points += 50;
+          else if (time < 10) points += 30;
+          else if (time < 15) points += 20;
+          else if (time < 30) points += 10;
+
+          if (tries === 0) {
+            setStreak((prev) => prev + 1);
+            points += streak * 20; // streak bonus grows
+          }
+
+          setScore((prev) => prev + points);
+          setCompletedPuzzles((prev) => new Set([...prev, puzzleId]));
+
+          setPuzzleTransitioning(true);
         }
-
-        setScore((prev) => prev + points);
-        setPuzzleTransitioning(true);
-
         setTimeout(() => {
           goToNextCombination();
           setTries(0);
@@ -159,7 +164,7 @@ function PuzzlePage() {
 
   useEffect(() => {
     setPuzzleNotFound(false); // Reset on puzzle change
-    setPuzzleTransitioning(false)
+    setPuzzleTransitioning(false);
     axios
       .get(`http://localhost:5000/api/puzzle/today/${puzzleId}`)
       .then((res) => {
@@ -182,7 +187,7 @@ function PuzzlePage() {
       })
       .catch((err) => {
         console.log("API error:", err.response?.status);
-        
+
         // If it's a 404 error, the puzzle doesn't exist
         if (err.response?.status === 404) {
           setPuzzleNotFound(true);
@@ -244,8 +249,6 @@ function PuzzlePage() {
     );
   }
 
-
-
   return (
     <div
       style={{
@@ -272,7 +275,6 @@ function PuzzlePage() {
           }}
         />
       )}
-
 
       {/* Top Stats Row */}
       <div
@@ -455,7 +457,6 @@ function PuzzlePage() {
         </div>
       </div>
 
-
       {/* Additional Chess Pieces scattered around */}
       <div
         style={{
@@ -469,7 +470,7 @@ function PuzzlePage() {
       >
         ♕
       </div>
-      
+
       <div
         style={{
           position: "absolute",
@@ -482,7 +483,7 @@ function PuzzlePage() {
       >
         ♖
       </div>
-      
+
       <div
         style={{
           position: "absolute",
@@ -495,7 +496,7 @@ function PuzzlePage() {
       >
         ♘
       </div>
-      
+
       <div
         style={{
           position: "absolute",
@@ -508,8 +509,6 @@ function PuzzlePage() {
       >
         ♗
       </div>
-
-      
     </div>
   );
 }
