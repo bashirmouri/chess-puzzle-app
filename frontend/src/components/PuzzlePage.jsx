@@ -4,13 +4,13 @@ import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 import InstructionsModal from "./InstructionsModal";
 import OutOfBoundsPage from "./OutOfBoundsPage";
+import ScorePage from "./ScorePage";
 
 function PuzzlePage() {
   const [fen, setFen] = useState("");
   const [loading, setLoading] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
   const [error, setError] = useState(null);
-  const [game, setGame] = useState(new Chess());
   const [solution, setSolution] = useState("");
   const [puzzleId, setpuzzleId] = useState(1);
   const [time, setTime] = useState(0);
@@ -26,7 +26,9 @@ function PuzzlePage() {
   const [puzzleNotFound, setPuzzleNotFound] = useState(false);
   const [puzzleTransitioning, setPuzzleTransitioning] = useState(false); // to avoid incrementing by 2
   const [completedPuzzles, setCompletedPuzzles] = useState(new Set());
-
+  const [totalTime, setTotalTime] = useState(0); // Track cumulative time
+  const [bestStreak, setBestStreak] = useState(0); // Track best streak achieved
+  const [showScorePage, setShowScorePage] = useState(false);
   // Add scoreboard with streaks !!!
 
   function onDrop(sourceSquare, targetSquare) {
@@ -79,10 +81,11 @@ function PuzzlePage() {
           else if (time < 30) points += 10;
 
           if (tries === 0) {
-            setStreak((prev) => prev + 1);
-            points += streak * 20; // streak bonus grows
+            const newStreak = streak + 1;
+            setStreak(newStreak);
+            setBestStreak((prev) => Math.max(prev, newStreak)); // Track best streak
+            points += streak * 20;
           }
-
           setScore((prev) => prev + points);
           setCompletedPuzzles((prev) => new Set([...prev, puzzleId]));
 
@@ -150,7 +153,12 @@ function PuzzlePage() {
   }
 
   const goToNextCombination = () => {
-    setpuzzleId((prev) => prev + 1);
+    if (puzzleId === 1) {
+      setTotalTime((prev) => prev + time);
+      setShowScorePage(true);
+    } else {
+      setpuzzleId((prev) => prev + 1);
+    }
   };
 
   const goToPreviousCombination = () => {
@@ -161,6 +169,21 @@ function PuzzlePage() {
     setpuzzleId(1);
     setPuzzleNotFound(false);
   };
+
+  const handlePlayAgain = () => {
+    // Reset everything for a new game
+    setpuzzleId(1);
+    setScore(0);
+    setStreak(0);
+    setBestStreak(0);
+    setTotalTime(0);
+    setTime(0);
+    setTries(0);
+    setPuzzleTransitioning(false);
+    setShowScorePage(false);
+  };
+
+
 
   useEffect(() => {
     setPuzzleNotFound(false); // Reset on puzzle change
@@ -225,6 +248,13 @@ function PuzzlePage() {
     return () => clearInterval(interval);
   }, [puzzleId, gameStarted]);
 
+  useEffect(() => {
+    if (puzzleId > 1) {
+      setTotalTime((prev) => prev + time);
+      setTime(0); // Reset current puzzle time
+    }
+  }, [puzzleId]); // Only when puzzleId changes
+
   if (puzzleNotFound) {
     return <OutOfBoundsPage onGoHome={handleGoHome} />;
   }
@@ -249,22 +279,29 @@ function PuzzlePage() {
     );
   }
 
+  // Show score page after completing puzzle 50
+  if (showScorePage) {
+    return (
+      <ScorePage
+        score={score}
+        totalTime={formatTime(totalTime)} 
+        bestStreak={bestStreak}
+        numPuzzlesSolved={completedPuzzles.size}
+        onPlayAgain={handlePlayAgain}
+      />
+    );
+  }
+
   return (
     <div
       style={{
-        border: "2px solid red",
+        //border: "2px solid red",
         height: "100vh",
         width: "100vw",
         backgroundImage: "url(/background.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        justifyContent: "space-around",
         padding: "20px",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        alignItems: "center",
       }}
     >
       {showInstructions && !gameStarted && (
