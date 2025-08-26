@@ -2,6 +2,7 @@ import React from "react";
 
 const ScorePage = ({
   score,
+  highscore,
   totalTime,
   bestStreak,
   numPuzzlesSolved,
@@ -56,7 +57,9 @@ const ScorePage = ({
           style={{
             fontWeight: "bold",
             fontSize: "25px",
-            backgroundColor: "#f2e3bdff", 
+            border: `4px solid`,
+            borderColor: rating.color,
+            backgroundColor: "#f7e0a7ff", 
             padding: "20px 25px",
             borderRadius: "12px",
             color: "#6d6c32ff", 
@@ -96,7 +99,7 @@ const ScorePage = ({
               borderRadius: "12px",
             }}
           >
-            Highscore:
+            Highscore: {highscore}
           </div>
         </div>
 

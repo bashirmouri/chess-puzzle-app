@@ -29,6 +29,8 @@ function PuzzlePage() {
   const [totalTime, setTotalTime] = useState(0); // Track cumulative time
   const [bestStreak, setBestStreak] = useState(0); // Track best streak achieved
   const [showScorePage, setShowScorePage] = useState(false);
+  const [highscore, setHighscore] = useState(0); // Track highscore
+
   // Add scoreboard with streaks !!!
 
   function onDrop(sourceSquare, targetSquare) {
@@ -183,8 +185,6 @@ function PuzzlePage() {
     setShowScorePage(false);
   };
 
-
-
   useEffect(() => {
     setPuzzleNotFound(false); // Reset on puzzle change
     setPuzzleTransitioning(false);
@@ -255,6 +255,18 @@ function PuzzlePage() {
     }
   }, [puzzleId]); // Only when puzzleId changes
 
+  useEffect(() => {
+    const savedHighScore = localStorage.getItem("chesshighscore");
+    if (savedHighScore) {
+      setHighscore(parseInt(savedHighScore));
+    }
+  }, []);
+
+  if (score > highscore) {
+    setHighscore(score);
+    localStorage.setItem("chessHighscore", score.toString());
+  }
+
   if (puzzleNotFound) {
     return <OutOfBoundsPage onGoHome={handleGoHome} />;
   }
@@ -284,7 +296,8 @@ function PuzzlePage() {
     return (
       <ScorePage
         score={score}
-        totalTime={formatTime(totalTime)} 
+        highscore={highscore}
+        totalTime={formatTime(totalTime)}
         bestStreak={bestStreak}
         numPuzzlesSolved={completedPuzzles.size}
         onPlayAgain={handlePlayAgain}
