@@ -5,6 +5,7 @@ import { Chess } from "chess.js";
 import InstructionsModal from "./InstructionsModal";
 import OutOfBoundsPage from "./OutOfBoundsPage";
 import ScorePage from "./ScorePage";
+import LevelScorePage from "./LevelScorePage";
 
 function PuzzlePage() {
   const [fen, setFen] = useState("");
@@ -29,8 +30,12 @@ function PuzzlePage() {
   const [totalTime, setTotalTime] = useState(0); // Track cumulative time
   const [bestStreak, setBestStreak] = useState(0); // Track best streak achieved
   const [showScorePage, setShowScorePage] = useState(false);
+  const [showLevelScorePage, setShowLevelScorePage] = useState(false);
   const [highscore, setHighscore] = useState(0); // Track highscore
-
+  const [levelscore, setLevelscore] = useState(0); // Track level score 
+  const [bestLevelStreak, setBestLevelStreak] = useState(0); // Best streak in current level
+  const [numPuzzlesSolvedLevel, setNumPuzzlesSolvedLevel] = useState(0); // Track number of puzzles solved
+  const [puzzlesCompletedinLevel, setPuzzlesCompletedinLevel] = useState(0);
   // Add scoreboard with streaks !!!
 
   function onDrop(sourceSquare, targetSquare) {
@@ -67,13 +72,12 @@ function PuzzlePage() {
       if (nextStep === solutionMoves.length) {
         const newFen = gameCopy.fen();
         setFen(newFen); //  Update fen for board to re-render
-
+        setNumPuzzlesSolvedLevel((prev) => prev + 1);
         // sound
         const audio = new Audio("/puzzle_correct.mp3");
         audio.play().catch((err) => console.warn("Audio blocked:", err));
 
-        // Calculate score
-
+        // Calculate score only if puzzle not completed yet
         if (!completedPuzzles.has(puzzleId)) {
           let points = 100; // base points
 
@@ -86,9 +90,11 @@ function PuzzlePage() {
             const newStreak = streak + 1;
             setStreak(newStreak);
             setBestStreak((prev) => Math.max(prev, newStreak)); // Track best streak
+            setBestLevelStreak((prev) => Math.max(prev, newStreak)); // Track best streak in current level
             points += streak * 20;
           }
           setScore((prev) => prev + points);
+          setLevelscore((prev) => prev + points);
           setCompletedPuzzles((prev) => new Set([...prev, puzzleId]));
 
           setPuzzleTransitioning(true);
@@ -134,8 +140,10 @@ function PuzzlePage() {
       setStreak(0);
       if (score - 50 < 0) {
         setScore(0);
+        setLevelscore(0);
       } else {
         setScore(score - 50); // penalty for mistakes
+        setLevelscore(levelscore - 50);
       }
 
       //sound
@@ -154,14 +162,21 @@ function PuzzlePage() {
     return `${minutes}:${secs}`;
   }
 
-  const goToNextCombination = () => {
-    if (puzzleId === 1) {
-      setTotalTime((prev) => prev + time);
-      setShowScorePage(true);
-    } else {
-      setpuzzleId((prev) => prev + 1);
-    }
-  };
+ const goToNextCombination = () => {
+  const newCount = puzzlesCompletedinLevel + 1;
+  setPuzzlesCompletedinLevel(newCount);
+
+  if (newCount === 10) {
+    setShowLevelScorePage(true);
+    setPuzzlesCompletedinLevel(0);
+    
+  } else if (puzzleId === 51) {
+    setTotalTime((prev) => prev + time);
+    setShowScorePage(true);
+  }
+  
+  setpuzzleId((prev) => prev + 1);
+}; // fix this so that every 10 puzzles it shows scoreboard and doesn't skip a puzzle when done (maybe return id-1)
 
   const goToPreviousCombination = () => {
     setpuzzleId((prev) => prev - 1);
@@ -184,6 +199,13 @@ function PuzzlePage() {
     setPuzzleTransitioning(false);
     setShowScorePage(false);
   };
+
+    const handleContinueToNextLevel = () => {
+      setpuzzleId((prev) => prev + 1);
+      setLevelscore(0);
+      setBestLevelStreak(0);
+      setNumPuzzlesSolvedLevel(0);
+    };
 
   useEffect(() => {
     setPuzzleNotFound(false); // Reset on puzzle change
@@ -290,6 +312,19 @@ function PuzzlePage() {
       </div>
     );
   }
+
+  if (puzzleId>1 && (puzzleId-1) % 10 === 0) {
+    return ( <LevelScorePage
+        score={score}
+        levelscore={levelscore}
+        totalTime={totalTime}
+        bestLevelStreak={bestLevelStreak}
+        numPuzzlesSolved={numPuzzlesSolvedLevel}
+        onContinueToNextLevel={handleContinueToNextLevel}
+      />
+    );
+  }
+
 
   // Show score page after completing puzzle 50
   if (showScorePage) {
