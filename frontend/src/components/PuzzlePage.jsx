@@ -35,7 +35,6 @@ function PuzzlePage() {
   const [levelscore, setLevelscore] = useState(0); // Track level score 
   const [bestLevelStreak, setBestLevelStreak] = useState(0); // Best streak in current level
   const [numPuzzlesSolvedLevel, setNumPuzzlesSolvedLevel] = useState(0); // Track number of puzzles solved
-  const [puzzlesCompletedinLevel, setPuzzlesCompletedinLevel] = useState(0);
   // Add scoreboard with streaks !!!
 
   function onDrop(sourceSquare, targetSquare) {
@@ -163,12 +162,10 @@ function PuzzlePage() {
   }
 
  const goToNextCombination = () => {
-  const newCount = puzzlesCompletedinLevel + 1;
-  setPuzzlesCompletedinLevel(newCount);
 
-  if (newCount === 10) {
+  if (puzzleId % 10 === 0) {
+    // Completed a full level
     setShowLevelScorePage(true);
-    setPuzzlesCompletedinLevel(0);
     
   } else if (puzzleId === 51) {
     setTotalTime((prev) => prev + time);
@@ -176,7 +173,7 @@ function PuzzlePage() {
   }
   
   setpuzzleId((prev) => prev + 1);
-}; // fix this so that every 10 puzzles it shows scoreboard and doesn't skip a puzzle when done (maybe return id-1)
+};
 
   const goToPreviousCombination = () => {
     setpuzzleId((prev) => prev - 1);
@@ -201,7 +198,7 @@ function PuzzlePage() {
   };
 
     const handleContinueToNextLevel = () => {
-      setpuzzleId((prev) => prev + 1);
+      setShowLevelScorePage(false);
       setLevelscore(0);
       setBestLevelStreak(0);
       setNumPuzzlesSolvedLevel(0);
@@ -313,7 +310,7 @@ function PuzzlePage() {
     );
   }
 
-  if (puzzleId>1 && (puzzleId-1) % 10 === 0) {
+  if (puzzleId>1 && showLevelScorePage) {
     return ( <LevelScorePage
         score={score}
         levelscore={levelscore}
