@@ -36,6 +36,9 @@ function PuzzlePage() {
   const [levelscore, setLevelscore] = useState(0); // Track level score
   const [bestLevelStreak, setBestLevelStreak] = useState(0); // Best streak in current level
   const [numPuzzlesSolvedLevel, setNumPuzzlesSolvedLevel] = useState(0); // Track number of puzzles solved
+  const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(
+    new Set()
+  );
   // Add scoreboard with streaks !!!
 
   function onDrop(sourceSquare, targetSquare) {
@@ -78,7 +81,10 @@ function PuzzlePage() {
         audio.play().catch((err) => console.warn("Audio blocked:", err));
 
         // Calculate score only if puzzle not completed yet
-        if (!completedPuzzles.has(puzzleId)) {
+        if (
+          !completedPuzzles.has(puzzleId) &&
+          !puzzlesWithSolutionViewed.has(puzzleId)
+        ) {
           let points = 100; // base points
 
           if (time < 5) points += 50;
@@ -207,6 +213,12 @@ function PuzzlePage() {
     setLevelscore(0);
     setBestLevelStreak(0);
     setNumPuzzlesSolvedLevel(0);
+  };
+
+  const showSolution = () => {
+    const solutionText = solutionMoves.join(" → ");
+    alert(`Solution: ${solutionText}`);
+    setPuzzlesWithSolutionViewed((prev) => new Set([...prev, puzzleId]));
   };
 
   useEffect(() => {
@@ -527,12 +539,29 @@ function PuzzlePage() {
           style={{
             border: "2px solid red",
             display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
           }}
         >
           <button
-            onClick={goToNextCombination}
+            onClick={showSolution}
             style={{
               alignSelf: "flex-end",
+              color: "#5e3a20ff",
+              backgroundColor: "#fdc298ff",
+              opacity: puzzleTransitioning ? 0.3 : 1,
+              pointerEvents: puzzleTransitioning ? "none" : "auto",
+              transition: "opacity 0.3s ease",
+              fontWeight: "bold",
+              padding: "5px 20px",
+            }}
+          >
+            Solution
+          </button>
+          <button
+            onClick={goToNextCombination}
+            style={{
+              alignSelf: "flex-start",
               color: "#5e3a20ff",
               backgroundColor: "#fdc298ff",
               opacity: puzzleTransitioning ? 0.3 : 1,

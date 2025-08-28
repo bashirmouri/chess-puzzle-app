@@ -1,4 +1,5 @@
 const CompletionProgress = ({ completed }) => {
+  if (completed < 0) completed = 0; // Ensure non-negative
   const progressPercentage = (completed / 10) * 100;
 
   return (
