@@ -36,9 +36,7 @@ function PuzzlePage() {
   const [levelscore, setLevelscore] = useState(0); // Track level score
   const [bestLevelStreak, setBestLevelStreak] = useState(0); // Best streak in current level
   const [numPuzzlesSolvedLevel, setNumPuzzlesSolvedLevel] = useState(0); // Track number of puzzles solved
-  const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(
-    new Set()
-  );
+  const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(new Set()); //track which puzzles used hint, and not count score
   // Add scoreboard with streaks !!!
 
   function onDrop(sourceSquare, targetSquare) {
@@ -102,7 +100,7 @@ function PuzzlePage() {
           setScore((prev) => prev + points);
           setLevelscore((prev) => prev + points);
           setCompletedPuzzles((prev) => new Set([...prev, puzzleId]));
-
+          setNumPuzzlesSolvedLevel((prev) => prev + 1);
           setPuzzleTransitioning(true);
         }
         setTimeout(() => {
@@ -169,7 +167,7 @@ function PuzzlePage() {
   }
 
   const goToNextCombination = () => {
-    setNumPuzzlesSolvedLevel((prev) => prev + 1);
+
     if (puzzleId % 10 === 0) {
       // Completed a full level
       setShowLevelScorePage(true);
@@ -177,13 +175,10 @@ function PuzzlePage() {
       setTotalTime((prev) => prev + time);
       setShowScorePage(true);
     }
-
     setpuzzleId((prev) => prev + 1);
   };
 
   const goToPreviousCombination = () => {
-    setNumPuzzlesSolvedLevel((prev) => prev - 1);
-
     if (puzzleId % 10 === 0) {
       setShowLevelScorePage(true);
     }
@@ -215,9 +210,72 @@ function PuzzlePage() {
     setNumPuzzlesSolvedLevel(0);
   };
 
+  //move all functions to another folder for better organization later
   const showSolution = () => {
-    const solutionText = solutionMoves.join(" → ");
-    alert(`Solution: ${solutionText}`);
+    const pieceNames = {
+      K: "King",
+      Q: "Queen",
+      R: "Rook",
+      B: "Bishop",
+      N: "Knight",
+    };
+
+    const explainSAN = (original) => {
+      let san = original;
+
+      // note: check/checkmate
+      let note = "";
+      if (san.endsWith("#")) {
+        note = " (checkmate)";
+        san = san.slice(0, -1);
+      } else if (san.endsWith("+")) {
+        note = " (check)";
+        san = san.slice(0, -1);
+      }
+
+      // en passant (optional notation)
+      let enPassant = "";
+      if (/e\.p\./i.test(san)) {
+        enPassant = " (en passant)";
+        san = san.replace(/e\.p\./i, "");
+      }
+
+      // Castling
+      if (san === "O-O" || san === "0-0") return "Castle kingside" + note;
+      if (san === "O-O-O" || san === "0-0-0") return "Castle queenside" + note;
+
+      // Piece (default = Pawn)
+      let piece = "Pawn";
+      if (pieceNames[san[0]]) {
+        piece = pieceNames[san[0]];
+        san = san.slice(1);
+      }
+
+      // Promotion
+      let promoTo = "";
+      const promoMatch = san.match(/=([KQRBN])/);
+      if (promoMatch) promoTo = pieceNames[promoMatch[1]];
+
+      // Target square (first occurrence like "e4")
+      const squareMatch = san.match(/([a-h][1-8])/);
+      const square = squareMatch ? squareMatch[1] : "";
+
+      const isCapture = san.includes("x");
+
+      if (isCapture) {
+        if (promoTo)
+          return `${piece} captures on ${square} and promotes to ${promoTo}${enPassant}${note}`;
+        return `${piece} captures on ${square}${enPassant}${note}`;
+      } else {
+        if (promoTo)
+          return `${piece} promotes to ${promoTo} on ${square}${note}`;
+        return `${piece} moves to ${square}${note}`;
+      }
+    };
+
+    const explainedMoves = solutionMoves.map(explainSAN);
+    alert(`Solution:\n${explainedMoves.join(" → ")}`);
+
     setPuzzlesWithSolutionViewed((prev) => new Set([...prev, puzzleId]));
   };
 
@@ -493,7 +551,7 @@ function PuzzlePage() {
         </div>
       </div>
 
-      <CompletionProgress completed={numPuzzlesSolvedLevel} />
+      <CompletionProgress puzzleId={puzzleId} />
 
       <div
         style={{
@@ -547,13 +605,13 @@ function PuzzlePage() {
             onClick={showSolution}
             style={{
               alignSelf: "flex-end",
-              color: "#5e3a20ff",
-              backgroundColor: "#fdc298ff",
+              color: "#0c163aff",
+              backgroundColor: "#24769fff",
               opacity: puzzleTransitioning ? 0.3 : 1,
               pointerEvents: puzzleTransitioning ? "none" : "auto",
               transition: "opacity 0.3s ease",
               fontWeight: "bold",
-              padding: "5px 20px",
+              padding: "5px 15px",
             }}
           >
             Solution

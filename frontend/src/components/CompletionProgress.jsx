@@ -1,13 +1,16 @@
-const CompletionProgress = ({ completed }) => {
-  if (completed < 0) completed = 0; // Ensure non-negative
-  const progressPercentage = (completed / 10) * 100;
+const CompletionProgress = ({ puzzleId=1 }) => {
+  if (puzzleId < 0) puzzleId = 0; // Ensure non-negative
+  const puzzlesPerLevel = 10;
+  const indexInLevel = ((puzzleId - 1) % puzzlesPerLevel); // 0..9
+  const progressPercentage = ((indexInLevel) / puzzlesPerLevel) * 100;
+
 
   return (
     <div
       style={{
         width: "100%",
         height: "6px",
-        backgroundColor: "#e0e0e0",
+        backgroundColor: "#b18489ff",
         position: "relative",
         marginBottom: "15px",
       }}
@@ -27,7 +30,7 @@ const CompletionProgress = ({ completed }) => {
           top: "-12px",
           transform: "translateX(-50%)",
           fontSize: "20px",
-          color: "#476155ff",
+          color: "#2e4c3eff",
           lineHeight: "1",
         }}
       >
