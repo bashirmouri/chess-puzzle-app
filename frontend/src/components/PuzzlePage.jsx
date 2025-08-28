@@ -6,6 +6,7 @@ import InstructionsModal from "./InstructionsModal";
 import OutOfBoundsPage from "./OutOfBoundsPage";
 import ScorePage from "./ScorePage";
 import LevelScorePage from "./LevelScorePage";
+import CompletionProgress from "./CompletionProgress";
 
 function PuzzlePage() {
   const [fen, setFen] = useState("");
@@ -366,7 +367,7 @@ function PuzzlePage() {
           justifyContent: "space-evenly", // Spreads items across full width
           alignItems: "center",
           width: "100%", // Ensure full width for spacing
-          marginBottom: "30px",
+          marginBottom: "15px",
           gap: "20px", // Minimum gap between items
         }}
       >
@@ -474,7 +475,10 @@ function PuzzlePage() {
         >
           Puzzle: {puzzleId}
         </div>
+        
       </div>
+
+      <CompletionProgress completed={numPuzzlesSolvedLevel} />
 
       <div
         style={{
