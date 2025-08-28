@@ -539,9 +539,10 @@ function PuzzlePage() {
               pointerEvents: puzzleTransitioning ? "none" : "auto",
               transition: "opacity 0.3s ease",
               fontWeight: "bold",
+              padding: "9px 30px",
             }}
           >
-            Next
+            Skip
           </button>
         </div>
       </div>
