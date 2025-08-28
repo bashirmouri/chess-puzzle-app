@@ -33,7 +33,7 @@ function PuzzlePage() {
   const [showScorePage, setShowScorePage] = useState(false);
   const [showLevelScorePage, setShowLevelScorePage] = useState(false);
   const [highscore, setHighscore] = useState(0); // Track highscore
-  const [levelscore, setLevelscore] = useState(0); // Track level score 
+  const [levelscore, setLevelscore] = useState(0); // Track level score
   const [bestLevelStreak, setBestLevelStreak] = useState(0); // Best streak in current level
   const [numPuzzlesSolvedLevel, setNumPuzzlesSolvedLevel] = useState(0); // Track number of puzzles solved
   // Add scoreboard with streaks !!!
@@ -72,7 +72,7 @@ function PuzzlePage() {
       if (nextStep === solutionMoves.length) {
         const newFen = gameCopy.fen();
         setFen(newFen); //  Update fen for board to re-render
-        setNumPuzzlesSolvedLevel((prev) => prev + 1);
+
         // sound
         const audio = new Audio("/puzzle_correct.mp3");
         audio.play().catch((err) => console.warn("Audio blocked:", err));
@@ -162,21 +162,25 @@ function PuzzlePage() {
     return `${minutes}:${secs}`;
   }
 
- const goToNextCombination = () => {
+  const goToNextCombination = () => {
+    setNumPuzzlesSolvedLevel((prev) => prev + 1);
+    if (puzzleId % 10 === 0) {
+      // Completed a full level
+      setShowLevelScorePage(true);
+    } else if (puzzleId === 51) {
+      setTotalTime((prev) => prev + time);
+      setShowScorePage(true);
+    }
 
-  if (puzzleId % 10 === 0) {
-    // Completed a full level
-    setShowLevelScorePage(true);
-    
-  } else if (puzzleId === 51) {
-    setTotalTime((prev) => prev + time);
-    setShowScorePage(true);
-  }
-  
-  setpuzzleId((prev) => prev + 1);
-};
+    setpuzzleId((prev) => prev + 1);
+  };
 
   const goToPreviousCombination = () => {
+    setNumPuzzlesSolvedLevel((prev) => prev - 1);
+
+    if (puzzleId % 10 === 0) {
+      setShowLevelScorePage(true);
+    }
     setpuzzleId((prev) => prev - 1);
   };
 
@@ -198,12 +202,12 @@ function PuzzlePage() {
     setShowScorePage(false);
   };
 
-    const handleContinueToNextLevel = () => {
-      setShowLevelScorePage(false);
-      setLevelscore(0);
-      setBestLevelStreak(0);
-      setNumPuzzlesSolvedLevel(0);
-    };
+  const handleContinueToNextLevel = () => {
+    setShowLevelScorePage(false);
+    setLevelscore(0);
+    setBestLevelStreak(0);
+    setNumPuzzlesSolvedLevel(0);
+  };
 
   useEffect(() => {
     setPuzzleNotFound(false); // Reset on puzzle change
@@ -311,8 +315,9 @@ function PuzzlePage() {
     );
   }
 
-  if (puzzleId>1 && showLevelScorePage) {
-    return ( <LevelScorePage
+  if (puzzleId > 1 && showLevelScorePage) {
+    return (
+      <LevelScorePage
         score={score}
         levelscore={levelscore}
         totalTime={totalTime}
@@ -322,7 +327,6 @@ function PuzzlePage() {
       />
     );
   }
-
 
   // Show score page after completing puzzle 50
   if (showScorePage) {
@@ -475,7 +479,6 @@ function PuzzlePage() {
         >
           Puzzle: {puzzleId}
         </div>
-        
       </div>
 
       <CompletionProgress completed={numPuzzlesSolvedLevel} />
