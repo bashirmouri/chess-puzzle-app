@@ -7,6 +7,7 @@ import OutOfBoundsPage from "./OutOfBoundsPage";
 import ScorePage from "./ScorePage";
 import LevelScorePage from "./LevelScorePage";
 import CompletionProgress from "./CompletionProgress";
+import formatTime from "../utils/formatTime";
 
 function PuzzlePage() {
   const [fen, setFen] = useState("");
@@ -156,14 +157,6 @@ function PuzzlePage() {
       //alert("Incorrect move. Try again!");
       return false;
     }
-  }
-
-  function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
-    const secs = (seconds % 60).toString().padStart(2, "0");
-    return `${minutes}:${secs}`;
   }
 
   const goToNextCombination = () => {
