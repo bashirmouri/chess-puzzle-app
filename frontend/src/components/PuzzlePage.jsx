@@ -8,6 +8,7 @@ import ScorePage from "./ScorePage";
 import LevelScorePage from "./LevelScorePage";
 import CompletionProgress from "./CompletionProgress";
 import formatTime from "../utils/formatTime";
+import showSolution from "../utils/showSolution";
 
 function PuzzlePage() {
   const [fen, setFen] = useState("");
@@ -204,73 +205,6 @@ function PuzzlePage() {
   };
 
   //move all functions to another folder for better organization later
-  const showSolution = () => {
-    const pieceNames = {
-      K: "King",
-      Q: "Queen",
-      R: "Rook",
-      B: "Bishop",
-      N: "Knight",
-    };
-
-    const explainSAN = (original) => {
-      let san = original;
-
-      // note: check/checkmate
-      let note = "";
-      if (san.endsWith("#")) {
-        note = " (checkmate)";
-        san = san.slice(0, -1);
-      } else if (san.endsWith("+")) {
-        note = " (check)";
-        san = san.slice(0, -1);
-      }
-
-      // en passant (optional notation)
-      let enPassant = "";
-      if (/e\.p\./i.test(san)) {
-        enPassant = " (en passant)";
-        san = san.replace(/e\.p\./i, "");
-      }
-
-      // Castling
-      if (san === "O-O" || san === "0-0") return "Castle kingside" + note;
-      if (san === "O-O-O" || san === "0-0-0") return "Castle queenside" + note;
-
-      // Piece (default = Pawn)
-      let piece = "Pawn";
-      if (pieceNames[san[0]]) {
-        piece = pieceNames[san[0]];
-        san = san.slice(1);
-      }
-
-      // Promotion
-      let promoTo = "";
-      const promoMatch = san.match(/=([KQRBN])/);
-      if (promoMatch) promoTo = pieceNames[promoMatch[1]];
-
-      // Target square (first occurrence like "e4")
-      const squareMatch = san.match(/([a-h][1-8])/);
-      const square = squareMatch ? squareMatch[1] : "";
-
-      const isCapture = san.includes("x");
-
-      if (isCapture) {
-        if (promoTo)
-          return `${piece} captures on ${square} and promotes to ${promoTo}${enPassant}${note}`;
-        return `${piece} captures on ${square}${enPassant}${note}`;
-      } else {
-        if (promoTo)
-          return `${piece} promotes to ${promoTo} on ${square}${note}`;
-        return `${piece} moves to ${square}${note}`;
-      }
-    };
-
-    const explainedMoves = solutionMoves.map(explainSAN);
-    alert(`Solution:\n${explainedMoves.join(" → ")}`);
-
-    setPuzzlesWithSolutionViewed((prev) => new Set([...prev, puzzleId]));
-  };
 
   useEffect(() => {
     setPuzzleNotFound(false); // Reset on puzzle change
@@ -343,7 +277,7 @@ function PuzzlePage() {
   }, [puzzleId]); // Only when puzzleId changes
 
   useEffect(() => {
-    const savedHighScore = localStorage.getItem("chesshighscore");
+    const savedHighScore = localStorage.getItem("chessHighscore");
     if (savedHighScore) {
       setHighscore(parseInt(savedHighScore));
     }
@@ -383,7 +317,7 @@ function PuzzlePage() {
       <LevelScorePage
         score={score}
         levelscore={levelscore}
-        totalTime={totalTime}
+        totalTime={formatTime(totalTime)}
         bestLevelStreak={bestLevelStreak}
         numPuzzlesSolved={numPuzzlesSolvedLevel}
         onContinueToNextLevel={handleContinueToNextLevel}
@@ -595,7 +529,7 @@ function PuzzlePage() {
           }}
         >
           <button
-            onClick={showSolution}
+            onClick={() => showSolution(solutionMoves, puzzleId, setPuzzlesWithSolutionViewed)}
             style={{
               alignSelf: "flex-end",
               color: "#0c163aff",
