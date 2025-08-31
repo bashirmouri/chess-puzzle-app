@@ -9,6 +9,10 @@ import LevelScorePage from "./LevelScorePage";
 import CompletionProgress from "./CompletionProgress";
 import formatTime from "../utils/formatTime";
 import showSolution from "../utils/showSolution";
+import { playWrong } from "../utils/sound";
+import { playCapture } from "../utils/sound";
+import { playCorrect } from "../utils/sound";
+import { playMove } from "../utils/sound";
 
 function PuzzlePage() {
   const [fen, setFen] = useState("");
@@ -43,16 +47,23 @@ function PuzzlePage() {
 
   function onDrop(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
-    const move = gameCopy.move({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: "q", // auto-promote to queen
+    let move;
+    try {
+      move = gameCopy.move({
+        from: sourceSquare,
+        to: targetSquare,
+        promotion: "q", // auto-promote to queen
     });
+  } catch (error) {
+    console.error("Impossible move", error); //impossible illegal move
+    playWrong();
+    return false;
+  }
 
     if (move === null) {
-      const audio = new Audio("/capture.mp3"); // try to fix sound when illegal
-      audio.play().catch((err) => console.warn("Audio blocked:", err));
-      return false; // illegal move
+      console.log("Well formed illegal move:", sourceSquare, targetSquare);
+      playWrong();
+      return false; // case where illegal move put returns null
     }
 
     //setFen(gameCopy.fen()); for future use if I want to make wrong move stay
@@ -63,7 +74,7 @@ function PuzzlePage() {
       "Player move:",
       playerMove,
       "Expected move:",
-      solutionMoves[currentStep]
+      solutionMoves[currentStep],
     );
     // remove this during export
 
@@ -77,8 +88,7 @@ function PuzzlePage() {
         setFen(newFen); //  Update fen for board to re-render
 
         // sound
-        const audio = new Audio("/puzzle_correct.mp3");
-        audio.play().catch((err) => console.warn("Audio blocked:", err));
+        playCorrect();
 
         // Calculate score only if puzzle not completed yet
         if (
@@ -116,11 +126,9 @@ function PuzzlePage() {
       }
 
       if (move.captured) {
-        const audio = new Audio("/capture.mp3");
-        audio.play().catch((err) => console.warn("Audio blocked:", err));
+        playCapture();
       } else {
-        const audio = new Audio("/move-self.mp3");
-        audio.play().catch((err) => console.warn("Audio blocked:", err));
+        playMove();
       }
       const opponentMoves = gameCopy.moves({ verbose: true });
       if (opponentMoves.length > 0) {
@@ -129,11 +137,9 @@ function PuzzlePage() {
           gameCopy.move(moveObj);
 
           if (moveObj.captured) {
-            const audio = new Audio("/capture.mp3");
-            audio.play().catch((err) => console.warn("Audio blocked:", err));
+            playCapture();
           } else {
-            const audio = new Audio("/move-self.mp3");
-            audio.play().catch((err) => console.warn("Audio blocked:", err));
+            playMove();
           }
           setFen(gameCopy.fen());
         }, 850);
@@ -153,8 +159,7 @@ function PuzzlePage() {
       }
 
       //sound
-      const audio = new Audio("/wrong_sound.wav");
-      audio.play().catch((err) => console.warn("Audio blocked:", err));
+      playWrong();
       //alert("Incorrect move. Try again!");
       return false;
     }
@@ -164,7 +169,7 @@ function PuzzlePage() {
 
     if (puzzleId % 10 === 0) {
       // Completed a full level
-      setShowLevelScorePage(true);
+      setShowLevelScorePage(true); // show level score page then increment so condition does not stay true
     } else if (puzzleId === 51) {
       setTotalTime((prev) => prev + time);
       setShowScorePage(true);
