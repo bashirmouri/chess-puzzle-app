@@ -534,7 +534,7 @@ function PuzzlePage() {
           }}
         >
           <button
-            onClick={() => showSolution(solutionMoves, puzzleId, setPuzzlesWithSolutionViewed)}
+            onClick={() => showSolution(solutionMoves, puzzleId, setPuzzlesWithSolutionViewed, setStreak)}
             style={{
               alignSelf: "flex-end",
               color: "#0c163aff",

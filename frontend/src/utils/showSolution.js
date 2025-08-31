@@ -1,4 +1,4 @@
-  const showSolution = (solutionMoves, puzzleId, setPuzzlesWithSolutionViewed) => {
+  const showSolution = (solutionMoves, puzzleId, setPuzzlesWithSolutionViewed, setStreak) => {
     const pieceNames = {
       K: "King",
       Q: "Queen",
@@ -61,6 +61,7 @@
     alert(`Solution:\n${explainedMoves.join(" → ")}`);
 
     setPuzzlesWithSolutionViewed((prev) => new Set([...prev, puzzleId]));
+    setStreak(0);
   };
 
   export default showSolution;
