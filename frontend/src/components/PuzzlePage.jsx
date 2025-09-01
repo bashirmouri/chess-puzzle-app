@@ -9,6 +9,8 @@ import LevelScorePage from "./LevelScorePage";
 import CompletionProgress from "./CompletionProgress";
 import formatTime from "../utils/formatTime";
 import showSolution from "../utils/showSolution";
+import scoreSystem from "../utils/scoreSystem";
+import { loadHighscore, saveHighscore } from "../utils/highscore";
 import { playWrong } from "../utils/sound";
 import { playCapture } from "../utils/sound";
 import { playCorrect } from "../utils/sound";
@@ -42,7 +44,9 @@ function PuzzlePage() {
   const [levelscore, setLevelscore] = useState(0); // Track level score
   const [bestLevelStreak, setBestLevelStreak] = useState(0); // Best streak in current level
   const [numPuzzlesSolvedLevel, setNumPuzzlesSolvedLevel] = useState(0); // Track number of puzzles solved
-  const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(new Set()); //track which puzzles used hint, and not count score
+  const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(
+    new Set()
+  ); //track which puzzles used hint, and not count score
   // Add scoreboard with streaks !!!
 
   function onDrop(sourceSquare, targetSquare) {
@@ -53,12 +57,12 @@ function PuzzlePage() {
         from: sourceSquare,
         to: targetSquare,
         promotion: "q", // auto-promote to queen
-    });
-  } catch (error) {
-    console.error("Impossible move", error); //impossible illegal move
-    playWrong();
-    return false;
-  }
+      });
+    } catch (error) {
+      console.error("Impossible move", error); //impossible illegal move
+      playWrong();
+      return false;
+    }
 
     if (move === null) {
       console.log("Well formed illegal move:", sourceSquare, targetSquare);
@@ -74,7 +78,7 @@ function PuzzlePage() {
       "Player move:",
       playerMove,
       "Expected move:",
-      solutionMoves[currentStep],
+      solutionMoves[currentStep]
     );
     // remove this during export
 
@@ -95,19 +99,13 @@ function PuzzlePage() {
           !completedPuzzles.has(puzzleId) &&
           !puzzlesWithSolutionViewed.has(puzzleId)
         ) {
-          let points = 100; // base points
-
-          if (time < 5) points += 50;
-          else if (time < 10) points += 30;
-          else if (time < 15) points += 20;
-          else if (time < 30) points += 10;
+          const points = scoreSystem(time, tries, streak);
 
           if (tries === 0) {
             const newStreak = streak + 1;
             setStreak(newStreak);
             setBestStreak((prev) => Math.max(prev, newStreak)); // Track best streak
             setBestLevelStreak((prev) => Math.max(prev, newStreak)); // Track best streak in current level
-            points += streak * 20;
           }
           setScore((prev) => prev + points);
           setLevelscore((prev) => prev + points);
@@ -166,11 +164,10 @@ function PuzzlePage() {
   }
 
   const goToNextCombination = () => {
-
-    if (puzzleId % 10 === 0) {
+    if (puzzleId % 10 === 0 && puzzleId !== 50) {
       // Completed a full level
       setShowLevelScorePage(true); // show level score page then increment so condition does not stay true
-    } else if (puzzleId === 51) {
+    } else if (puzzleId === 50) {
       setTotalTime((prev) => prev + time);
       setShowScorePage(true);
     }
@@ -252,10 +249,7 @@ function PuzzlePage() {
     if (level !== previousLevel) {
       // Only run if level changed
       setAnimateLevel(true);
-
-      // Turn off after 1s
       timer = setTimeout(() => setAnimateLevel(false), 1000);
-
       // Update previousLevel to the new one
       setPreviousLevel(level);
     }
@@ -282,15 +276,12 @@ function PuzzlePage() {
   }, [puzzleId]); // Only when puzzleId changes
 
   useEffect(() => {
-    const savedHighScore = localStorage.getItem("chessHighscore");
-    if (savedHighScore) {
-      setHighscore(parseInt(savedHighScore));
-    }
+    setHighscore(loadHighscore());
   }, []);
 
   if (score > highscore) {
     setHighscore(score);
-    localStorage.setItem("chessHighscore", score.toString());
+    saveHighscore(score);
   }
 
   if (puzzleNotFound) {
@@ -534,7 +525,14 @@ function PuzzlePage() {
           }}
         >
           <button
-            onClick={() => showSolution(solutionMoves, puzzleId, setPuzzlesWithSolutionViewed, setStreak)}
+            onClick={() =>
+              showSolution(
+                solutionMoves,
+                puzzleId,
+                setPuzzlesWithSolutionViewed,
+                setStreak
+              )
+            }
             style={{
               alignSelf: "flex-end",
               color: "#0c163aff",
