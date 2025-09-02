@@ -47,7 +47,6 @@ function PuzzlePage() {
   const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(
     new Set()
   ); //track which puzzles used hint, and not count score
-  // Add scoreboard with streaks !!!
 
   function onDrop(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
@@ -74,12 +73,12 @@ function PuzzlePage() {
 
     const playerMove = move.san; // translates move into standard notation
 
-    console.log(
+    /*console.log(
       "Player move:",
       playerMove,
       "Expected move:",
       solutionMoves[currentStep]
-    );
+    ); shows correct move in console*/
     // remove this during export
 
     if (playerMove === solutionMoves[currentStep]) {
@@ -101,12 +100,14 @@ function PuzzlePage() {
         ) {
           const points = scoreSystem(time, tries, streak);
 
+          //solved perfectly
           if (tries === 0) {
             const newStreak = streak + 1;
             setStreak(newStreak);
             setBestStreak((prev) => Math.max(prev, newStreak)); // Track best streak
             setBestLevelStreak((prev) => Math.max(prev, newStreak)); // Track best streak in current level
           }
+
           setScore((prev) => prev + points);
           setLevelscore((prev) => prev + points);
           setCompletedPuzzles((prev) => new Set([...prev, puzzleId]));
@@ -128,6 +129,8 @@ function PuzzlePage() {
       } else {
         playMove();
       }
+
+      //Opponent turn (more than one correct move)
       const opponentMoves = gameCopy.moves({ verbose: true });
       if (opponentMoves.length > 0) {
         setTimeout(() => {
@@ -146,6 +149,7 @@ function PuzzlePage() {
       setFen(gameCopy.fen());
       return true;
     } else {
+      // Wrong move (illegal move is a different case)
       setTries((prev) => prev + 1);
       setStreak(0);
       if (score - 50 < 0) {
@@ -171,6 +175,7 @@ function PuzzlePage() {
       setTotalTime((prev) => prev + time);
       setShowScorePage(true);
     }
+    setTotalTime((prev) => prev + time);
     setpuzzleId((prev) => prev + 1);
   };
 
@@ -269,13 +274,6 @@ function PuzzlePage() {
   }, [puzzleId, gameStarted]);
 
   useEffect(() => {
-    if (puzzleId > 1) {
-      setTotalTime((prev) => prev + time);
-      setTime(0); // Reset current puzzle time
-    }
-  }, [puzzleId]); // Only when puzzleId changes
-
-  useEffect(() => {
     setHighscore(loadHighscore());
   }, []);
 
@@ -312,6 +310,7 @@ function PuzzlePage() {
     return (
       <LevelScorePage
         score={score}
+        level={level}
         levelscore={levelscore}
         totalTime={formatTime(totalTime)}
         bestLevelStreak={bestLevelStreak}
@@ -513,7 +512,17 @@ function PuzzlePage() {
             alignItems: "center",
           }}
         >
-          <Chessboard position={fen} onPieceDrop={onDrop} boardWidth={500} />
+          <Chessboard
+            position={fen}
+            onPieceDrop={onDrop}
+            boardWidth={500}
+            customDarkSquareStyle={{ backgroundColor: "#5c907bff" }}
+            customLightSquareStyle={{ backgroundColor: "#d9f0e1" }}
+            customBoardStyle={{
+              borderRadius: "10px",
+              boxShadow: "0 50px 20px rgba(0,0,0,0.4)",
+            }}
+          />
         </div>
 
         <div

@@ -7,8 +7,6 @@ const scoreSystem = (time, tries, streak) => {
     else if (time < 15) points += 20;
     else if (time < 30) points += 10;
 
-    console.log("tries:" ,{tries});
-
     if (tries === 0) {
         points += streak * 20;
     }

@@ -20,13 +20,6 @@
         san = san.slice(0, -1);
       }
 
-      // en passant (optional notation)
-      let enPassant = "";
-      if (/e\.p\./i.test(san)) {
-        enPassant = " (en passant)";
-        san = san.replace(/e\.p\./i, "");
-      }
-
 
       // Piece (default = Pawn)
       let piece = "Pawn";

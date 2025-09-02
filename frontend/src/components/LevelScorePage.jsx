@@ -2,30 +2,15 @@ import React from "react";
 
 const LevelScorePage = ({
   score,
+  level,
   levelscore,
   totalTime,
   bestLevelStreak,
   numPuzzlesSolved,
   onContinueToNextLevel,
 }) => {
-  // Calculate some achievements
 
-  const getScoreRating = (score) => {
-    if (score >= 4500)
-      return { text: "GRANDMASTER", color: "#C9A227", glow: "gold" }; // Gold
-    if (score >= 4000)
-      return { text: "MASTER", color: "#B08D57", glow: "bronze" }; // Bronze-gold
-    if (score >= 3500)
-      return { text: "EXPERT", color: "#7B6D8D", glow: "purple" }; // Muted royal purple
-    if (score >= 3000)
-      return { text: "ADVANCED", color: "#2F5233", glow: "green" }; // Deep forest green
-    if (score >= 2500)
-      return { text: "INTERMEDIATE", color: "#A33E2E", glow: "terracotta" }; // Brick red
-    return { text: "BEGINNER", color: "#3E2C1C", glow: "espresso" }; // Dark brown
-  };
-
-  const rating = getScoreRating(score);
-
+  
   return (
     <div
       style={{
@@ -58,14 +43,14 @@ const LevelScorePage = ({
             fontWeight: "bold",
             fontSize: "25px",
             border: `4px solid`,
-            borderColor: rating.color,
-            backgroundColor: "#f7e0a7ff", 
+            borderColor: "gold",
+            backgroundColor: "#f1ddabff", 
             padding: "20px 25px",
             borderRadius: "12px",
-            color: "#6d6c32ff", 
+            color: "#5a5930ff", 
           }}
         >
-          Rating: {rating.text}
+          Level {level-1} completed
         </div>
 
         <div

@@ -11,15 +11,15 @@ const ScorePage = ({
   // Calculate some achievements
 
   const getScoreRating = (score) => {
-    if (score >= 4500)
+    if (score >= 33000)
       return { text: "GRANDMASTER", color: "#C9A227", glow: "gold" }; // Gold
-    if (score >= 4000)
+    if (score >= 25000)
       return { text: "MASTER", color: "#B08D57", glow: "bronze" }; // Bronze-gold
-    if (score >= 3500)
+    if (score >= 18000)
       return { text: "EXPERT", color: "#7B6D8D", glow: "purple" }; // Muted royal purple
-    if (score >= 3000)
+    if (score >= 12000)
       return { text: "ADVANCED", color: "#2F5233", glow: "green" }; // Deep forest green
-    if (score >= 2500)
+    if (score >= 6000)
       return { text: "INTERMEDIATE", color: "#A33E2E", glow: "terracotta" }; // Brick red
     return { text: "BEGINNER", color: "#3E2C1C", glow: "espresso" }; // Dark brown
   };
