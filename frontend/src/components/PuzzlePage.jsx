@@ -10,6 +10,7 @@ import CompletionProgress from "./CompletionProgress";
 import formatTime from "../utils/formatTime";
 import showSolution from "../utils/showSolution";
 import scoreSystem from "../utils/scoreSystem";
+import { getLegalMoveSquares } from "../utils/chessutils";
 import { loadHighscore, saveHighscore } from "../utils/highscore";
 import { playWrong } from "../utils/sound";
 import { playCapture } from "../utils/sound";
@@ -44,6 +45,8 @@ function PuzzlePage() {
   const [levelscore, setLevelscore] = useState(0); // Track level score
   const [bestLevelStreak, setBestLevelStreak] = useState(0); // Best streak in current level
   const [numPuzzlesSolvedLevel, setNumPuzzlesSolvedLevel] = useState(0); // Track number of puzzles solved
+  const [selectedSquare, setSelectedSquare] = useState(null);
+  const [moveSquares, setMoveSquares] = useState({});
   const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(
     new Set()
   ); //track which puzzles used hint, and not count score
@@ -168,6 +171,7 @@ function PuzzlePage() {
   }
 
   const goToNextCombination = () => {
+    
     if (puzzleId % 10 === 0 && puzzleId !== 50) {
       // Completed a full level
       setShowLevelScorePage(true); // show level score page then increment so condition does not stay true
@@ -177,6 +181,7 @@ function PuzzlePage() {
     }
     setTotalTime((prev) => prev + time);
     setpuzzleId((prev) => prev + 1);
+    
   };
 
   const goToPreviousCombination = () => {
@@ -211,6 +216,18 @@ function PuzzlePage() {
     setNumPuzzlesSolvedLevel(0);
   };
 
+  const onSquareClick = (square) => {
+  // if click on same square a second time
+  if (selectedSquare === square) {
+    setSelectedSquare(null);
+    setMoveSquares({});
+    return;
+  }
+
+  setSelectedSquare(square);
+  setMoveSquares(getLegalMoveSquares(fen, square));
+  };
+
   //move all functions to another folder for better organization later
 
   useEffect(() => {
@@ -235,6 +252,8 @@ function PuzzlePage() {
         setSolution(res.data.solution_move);
         setLevel(res.data.level);
         setLoading(false);
+        setSelectedSquare(null);
+        setMoveSquares({});
       })
       .catch((err) => {
         console.log("API error:", err.response?.status);
@@ -515,7 +534,10 @@ function PuzzlePage() {
           <Chessboard
             position={fen}
             onPieceDrop={onDrop}
+            onSquareClick={onSquareClick}
+            customSquareStyles={moveSquares}
             boardWidth={500}
+            animationDuration={300}
             customDarkSquareStyle={{ backgroundColor: "#5c907bff" }}
             customLightSquareStyle={{ backgroundColor: "#d9f0e1" }}
             customBoardStyle={{
