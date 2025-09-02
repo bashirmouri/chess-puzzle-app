@@ -47,11 +47,12 @@ function PuzzlePage() {
   const [numPuzzlesSolvedLevel, setNumPuzzlesSolvedLevel] = useState(0); // Track number of puzzles solved
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [moveSquares, setMoveSquares] = useState({});
+  const [animationDuration, setAnimationDuration] = useState(0); // default animation duration for a piece when solving a puzzle correctly
   const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(
     new Set()
   ); //track which puzzles used hint, and not count score
 
-  function onDrop(sourceSquare, targetSquare) {
+  function handleMove(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
     let move;
     try {
@@ -170,8 +171,38 @@ function PuzzlePage() {
     }
   }
 
+  function onDrop(sourceSquare, targetSquare) {
+    handleMove(sourceSquare, targetSquare);
+    setAnimationDuration(225);
+  }
+
+  // Single onSquareClick handler
+  const onSquareClick = (square) => {
+    // If user clicks the same square again, deselect it
+    if (selectedSquare === square) {
+      setSelectedSquare(null);
+      setMoveSquares({}); // remove highlights
+      return;
+    }
+
+    // If a piece is already selected, try to move it
+    if (selectedSquare) {
+      setAnimationDuration(300); 
+      handleMove(selectedSquare, square);
+      setSelectedSquare(null); // deselect after trying move
+      setMoveSquares({}); // remove highlights after move
+      return;
+    }
+
+    // If no piece selected yet, and the clicked square has a piece
+    const game = new Chess(fen);
+    if (game.get(square)) {
+      setSelectedSquare(square);
+      setMoveSquares(getLegalMoveSquares(fen, square)); // highlight legal moves
+    }
+  };
+
   const goToNextCombination = () => {
-    
     if (puzzleId % 10 === 0 && puzzleId !== 50) {
       // Completed a full level
       setShowLevelScorePage(true); // show level score page then increment so condition does not stay true
@@ -181,7 +212,6 @@ function PuzzlePage() {
     }
     setTotalTime((prev) => prev + time);
     setpuzzleId((prev) => prev + 1);
-    
   };
 
   const goToPreviousCombination = () => {
@@ -214,18 +244,6 @@ function PuzzlePage() {
     setLevelscore(0);
     setBestLevelStreak(0);
     setNumPuzzlesSolvedLevel(0);
-  };
-
-  const onSquareClick = (square) => {
-  // if click on same square a second time
-  if (selectedSquare === square) {
-    setSelectedSquare(null);
-    setMoveSquares({});
-    return;
-  }
-
-  setSelectedSquare(square);
-  setMoveSquares(getLegalMoveSquares(fen, square));
   };
 
   //move all functions to another folder for better organization later
@@ -537,7 +555,7 @@ function PuzzlePage() {
             onSquareClick={onSquareClick}
             customSquareStyles={moveSquares}
             boardWidth={500}
-            animationDuration={300}
+            animationDuration={animationDuration}
             customDarkSquareStyle={{ backgroundColor: "#5c907bff" }}
             customLightSquareStyle={{ backgroundColor: "#d9f0e1" }}
             customBoardStyle={{
