@@ -395,7 +395,7 @@ function PuzzlePage() {
       {/* Top Stats Row */}
       <div
         style={{
-          border: "2px solid red",
+          //border: "2px solid red",
           display: "flex",
           justifyContent: "space-evenly", // Spreads items across full width
           alignItems: "center",
@@ -516,13 +516,13 @@ function PuzzlePage() {
         style={{
           display: "flex",
           justifyContent: "space-around",
-          border: "2px solid green",
+          //border: "2px solid green",
           width: "100%", // makes it stretch to full screen
         }}
       >
         <div
           style={{
-            border: "2px solid red",
+            //border: "2px solid red",
             display: "flex", // align self works only for one child in flexbox
           }}
         >
@@ -567,7 +567,7 @@ function PuzzlePage() {
 
         <div
           style={{
-            border: "2px solid red",
+            //border: "2px solid red",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -590,7 +590,7 @@ function PuzzlePage() {
               pointerEvents: puzzleTransitioning ? "none" : "auto",
               transition: "opacity 0.3s ease",
               fontWeight: "bold",
-              padding: "5px 15px",
+              padding: "7px 15px",
             }}
           >
             Solution
@@ -630,7 +630,7 @@ function PuzzlePage() {
       <div
         style={{
           position: "absolute",
-          top: "20%",
+          top: "25%",
           right: "15%",
           fontSize: "50px",
           opacity: "0.3",

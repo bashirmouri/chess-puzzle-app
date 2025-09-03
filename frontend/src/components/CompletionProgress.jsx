@@ -12,6 +12,7 @@ const CompletionProgress = ({ puzzleId=1 }) => {
         height: "6px",
         backgroundColor: "#b18489ff",
         position: "relative",
+        borderRadius: "3px",
         marginBottom: "15px",
       }}
     >
@@ -20,6 +21,7 @@ const CompletionProgress = ({ puzzleId=1 }) => {
           height: "100%",
           width: `${progressPercentage}%`,
           backgroundColor: "#23beb3ff",
+          borderRadius: "3px",
           transition: "width 0.3s ease",
         }}
       />

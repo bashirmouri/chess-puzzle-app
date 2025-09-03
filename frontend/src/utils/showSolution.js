@@ -41,8 +41,8 @@
 
       if (isCapture) {
         if (promoTo)
-          return `${piece} captures on ${square} and promotes to ${promoTo}${enPassant}${note}`;
-        return `${piece} captures on ${square}${enPassant}${note}`;
+          return `${piece} captures on ${square} and promotes to ${promoTo}${note}`;
+        return `${piece} captures on ${square}${note}`;
       } else {
         if (promoTo)
           return `${piece} promotes to ${promoTo} on ${square}${note}`;
@@ -51,7 +51,7 @@
     };
 
     const explainedMoves = solutionMoves.map(explainSAN);
-    alert(`Solution:\n${explainedMoves.join(" → ")}`);
+    alert(`Solution:\n${explainedMoves.join("  \n→ ")}`);
 
     setPuzzlesWithSolutionViewed((prev) => new Set([...prev, puzzleId]));
     setStreak(0);

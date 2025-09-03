@@ -15,7 +15,7 @@ export function getLegalMoveSquares(fen, square) {
         background = "radial-gradient(circle, transparent 60%, rgba(91, 133, 84, 0.7) 60%, rgba(91, 133, 84, 0.7) 85%, transparent 85%)";
     } else {
         // empty square
-        background = "radial-gradient(circle, rgba(104, 121, 107, 0.4) 20%, transparent 25%)";
+        background = "radial-gradient(circle, rgba(86, 99, 89, 0.4) 20%, transparent 20%)";
     }
 
     squares[move.to] = { background: background, borderRadius: "50%" };
