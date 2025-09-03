@@ -10,7 +10,7 @@ app.use(express.json());
   app.get('/api/puzzle/today/:puzzleId', async (req, res) => { 
   const puzzleId = req.params.puzzleId; // this is the puzzle id
   try {
-    console.log("Requested puzzle id:", puzzleId);
+    //console.log("Requested puzzle id:", puzzleId);
 
     const result = await pool.query(
       'SELECT fen, solution_moves, level FROM puzzles WHERE id = $1',
@@ -18,7 +18,7 @@ app.use(express.json());
     ); // $1 to prevent SQL injection
 
     // log the raw DB result
-    console.log("Database result:", result.rows);
+    //console.log("Database result:", result.rows);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Puzzle not found' });
@@ -36,7 +36,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  //console.log(`Server running on port ${PORT}`);
 });
 
 
