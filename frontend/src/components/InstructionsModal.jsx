@@ -50,7 +50,7 @@ function InstructionsModal({ onClose }) {
             marginBottom: "12px",
           }}
         >
-          You play as <b>white</b> <br /><b>5 Levels</b> - - - each with <b>10 puzzles</b>
+          You play as <b>White</b> <br /><b>5 Levels</b> - - - each with <b>10 puzzles</b>
         </div>
 
         {/* Base Points */}

@@ -16,6 +16,7 @@ import { playWrong } from "../utils/sound";
 import { playCapture } from "../utils/sound";
 import { playCorrect } from "../utils/sound";
 import { playMove } from "../utils/sound";
+import { playCheck } from "../utils/sound";
 
 function PuzzlePage() {
   const [fen, setFen] = useState("");
@@ -128,7 +129,9 @@ function PuzzlePage() {
         return true;
       }
 
-      if (move.captured) {
+      if (gameCopy.inCheck()) {
+        playCheck();
+      } else if (move.captured) {
         playCapture();
       } else {
         playMove();
@@ -202,6 +205,14 @@ function PuzzlePage() {
     }
   };
 
+  function onPieceDragBegin(piece, sourceSquare) {
+  const game = new Chess(fen);
+  if (game.get(sourceSquare)) {
+    setSelectedSquare(sourceSquare);
+    setMoveSquares(getLegalMoveSquares(fen, sourceSquare)); // highlight legal moves
+  }
+  }
+
   const goToNextCombination = () => {
     if (puzzleId % 10 === 0 && puzzleId !== 50) {
       // Completed a full level
@@ -254,7 +265,7 @@ function PuzzlePage() {
     axios
       .get(`http://localhost:5000/api/puzzle/today/${puzzleId}`)
       .then((res) => {
-        console.log("API response:", res.data);
+        //console.log("API response:", res.data);
 
         // Check if database returned empty array
         if (Array.isArray(res.data) && res.data.length === 0) {
@@ -553,6 +564,7 @@ function PuzzlePage() {
             position={fen}
             onPieceDrop={onDrop}
             onSquareClick={onSquareClick}
+            onPieceDragBegin={onPieceDragBegin}
             customSquareStyles={moveSquares}
             boardWidth={500}
             animationDuration={animationDuration}

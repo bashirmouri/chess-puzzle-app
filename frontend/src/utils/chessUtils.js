@@ -23,6 +23,6 @@ export function getLegalMoveSquares(fen, square) {
 
   // Highlight the selected piece on 'square'
   squares[square] = { background: "rgba(139, 139, 88, 0.4)" };
-  console.log(squares);
+  //console.log(squares);
   return squares;
 }

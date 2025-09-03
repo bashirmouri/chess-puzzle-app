@@ -50,7 +50,7 @@ const LevelScorePage = ({
             color: "#5a5930ff", 
           }}
         >
-          Level {level-1} completed
+          Level {level-1} Completed
         </div>
 
         <div
