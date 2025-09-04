@@ -273,6 +273,8 @@ function PuzzlePage() {
           setLoading(false);
           return;
         }
+        
+        console.log("API_URL on Vercel:", import.meta.env.VITE_API_URL);
 
         setFen(res.data.fen);
         setSolutionMoves(res.data.solution_moves);
