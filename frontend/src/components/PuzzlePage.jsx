@@ -10,7 +10,7 @@ import CompletionProgress from "./CompletionProgress";
 import formatTime from "../utils/formatTime";
 import showSolution from "../utils/showSolution";
 import scoreSystem from "../utils/scoreSystem";
-import { getLegalMoveSquares } from "../utils/chessutils";
+import { getLegalMoveSquares } from "../utils/chessUtils";
 import { loadHighscore, saveHighscore } from "../utils/highscore";
 import { playWrong } from "../utils/sound";
 import { playCapture } from "../utils/sound";
