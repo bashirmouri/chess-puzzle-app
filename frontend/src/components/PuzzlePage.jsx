@@ -263,7 +263,7 @@ function PuzzlePage() {
     setPuzzleNotFound(false); // Reset on puzzle change
     setPuzzleTransitioning(false);
     axios
-      .get(`http://localhost:5000/api/puzzle/today/${puzzleId}`)
+      .get(`${import.meta.env.VITE_APP_API_URL}/api/puzzle/today/${puzzleId}`)
       .then((res) => {
         //console.log("API response:", res.data);
 
@@ -274,7 +274,6 @@ function PuzzlePage() {
           return;
         }
 
-        // Normal puzzle loading
         setFen(res.data.fen);
         setSolutionMoves(res.data.solution_moves);
         setCurrentStep(0);

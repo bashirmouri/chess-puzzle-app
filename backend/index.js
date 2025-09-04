@@ -4,7 +4,13 @@ const pool = require('./db');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173", // Vite default dev server port
+    "https://chess-puzzle-app-five.vercel.app" // Hosted frontend
+  ]
+}));
+
 app.use(express.json());
 
   app.get('/api/puzzle/today/:puzzleId', async (req, res) => { 
