@@ -13,7 +13,7 @@ const CompletionProgress = ({ puzzleId=1 }) => {
         backgroundColor: "#b18489ff",
         position: "relative",
         borderRadius: "3px",
-        marginBottom: "15px",
+        marginBottom: "15px", // change depending on localhost or vercel
       }}
     >
       <div

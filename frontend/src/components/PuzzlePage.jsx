@@ -52,6 +52,8 @@ function PuzzlePage() {
   const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(
     new Set()
   ); //track which puzzles used hint, and not count score
+  const [boardWidth, setBoardWidth] = useState(getBoardWidth());
+
 
   function handleMove(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
@@ -213,6 +215,11 @@ function PuzzlePage() {
   }
   }
 
+  function getBoardWidth() {
+    const width = window.innerWidth;
+    return width < 768 ? width * 0.9 : 500; // mobile 90%, desktop 500px
+  }
+
   const goToNextCombination = () => {
     if (puzzleId % 10 === 0 && puzzleId !== 50) {
       // Completed a full level
@@ -328,6 +335,14 @@ function PuzzlePage() {
     setHighscore(loadHighscore());
   }, []);
 
+    useEffect(() => {
+    const handleResize = () => {
+      setBoardWidth(getBoardWidth());
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   if (score > highscore) {
     setHighscore(score);
     saveHighscore(score);
@@ -385,12 +400,14 @@ function PuzzlePage() {
     );
   }
 
+  const isMobile = window.innerWidth < 768;
+
   return (
     <div
       style={{
         //border: "2px solid red",
-        height: "100vh",
-        width: "100vw",
+        height: isMobile ? "100%" : "100vh",
+        width: isMobile ? "100%" : "100vw",
         backgroundImage: "url(/background.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -416,6 +433,7 @@ function PuzzlePage() {
           width: "100%", // Ensure full width for spacing
           marginBottom: "15px",
           gap: "20px", // Minimum gap between items
+          flexWrap: "wrap", // Wrap to next line on small screens
         }}
       >
         {/* Time Container */}
@@ -569,7 +587,7 @@ function PuzzlePage() {
             onSquareClick={onSquareClick}
             onPieceDragBegin={onPieceDragBegin}
             customSquareStyles={moveSquares}
-            boardWidth={500}
+            boardWidth={ boardWidth } // for tel // change
             animationDuration={animationDuration}
             customDarkSquareStyle={{ backgroundColor: "#5c907bff" }}
             customLightSquareStyle={{ backgroundColor: "#d9f0e1" }}
