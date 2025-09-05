@@ -411,7 +411,7 @@ function PuzzlePage() {
         width: isMobile ? "100%" : "100vw",
         minHeight: isMobile ? "100dvh" : "100vh",
         backgroundImage: "url(/background.jpg)",
-        backgroundSize: "cover",
+        backgroundSize: "100% 100%",
         backgroundPosition: "center",
         padding: "20px",
       }}
@@ -550,7 +550,7 @@ function PuzzlePage() {
         style={{
           display: "flex",
           justifyContent: "space-around",
-          //border: "2px solid green",
+          border: "2px solid green",
           width: "100%", // makes it stretch to full screen
         }}
       >
