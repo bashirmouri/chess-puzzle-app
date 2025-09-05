@@ -408,6 +408,7 @@ function PuzzlePage() {
         //border: "2px solid red",
         height: isMobile ? "100%" : "100vh",
         width: isMobile ? "100%" : "100vw",
+        minHeight: isMobile ? "100dvh" : "100vh",
         backgroundImage: "url(/background.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
