@@ -217,7 +217,8 @@ function PuzzlePage() {
 
   function getBoardWidth() {
     const width = window.innerWidth;
-    return width < 768 ? width * 0.7 : 500; // mobile 90%, desktop 500px
+    console.log(width);
+    return width < 768 ? width * 0.9 : 500; // mobile 70%, desktop 500px
   }
 
   const goToNextCombination = () => {
@@ -405,7 +406,7 @@ function PuzzlePage() {
   return (
     <div
       style={{
-        //border: "2px solid red",
+        border: "2px solid red",
         height: isMobile ? "100%" : "100vh",
         width: isMobile ? "100%" : "100vw",
         minHeight: isMobile ? "100dvh" : "100vh",
