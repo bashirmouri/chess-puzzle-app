@@ -217,7 +217,7 @@ function PuzzlePage() {
 
   function getBoardWidth() {
     const width = window.innerWidth;
-    return width < 768 ? width * 0.9 : 500; // mobile 90%, desktop 500px
+    return width < 768 ? width * 0.7 : 500; // mobile 90%, desktop 500px
   }
 
   const goToNextCombination = () => {
