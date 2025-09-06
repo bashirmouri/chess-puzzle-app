@@ -8,6 +8,7 @@ const LevelScorePage = ({
   bestLevelStreak,
   numPuzzlesSolved,
   onContinueToNextLevel,
+  isMobile,
 }) => {
 
   
@@ -16,7 +17,7 @@ const LevelScorePage = ({
       style={{
         height: "100vh",
         width: "100vw",
-        backgroundImage: "url(/background.jpg)",
+        backgroundImage: isMobile ? "url(/background-mobile.jpeg)" : "url(/background.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         padding: "20px",
@@ -25,12 +26,14 @@ const LevelScorePage = ({
         justifyContent: "center",
       }}
     >
+      
       <div
         style={{
           backgroundColor: "rgba(245, 233, 218, 0.95)", 
           padding: "20px 30px",
           borderRadius: "20px",
           height: "70vh",
+          width: isMobile ? "90vw" : "auto",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-around",
@@ -91,7 +94,7 @@ const LevelScorePage = ({
         <div
           style={{
             backgroundColor: "#F0EBE3", // Soft beige background
-            padding: "20px 25px",
+            padding: isMobile ? "15px 15px" : "20px 25px",
             borderRadius: "15px",
             display: "flex",
             flexDirection: "row",

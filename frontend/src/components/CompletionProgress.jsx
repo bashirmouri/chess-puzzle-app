@@ -1,4 +1,4 @@
-const CompletionProgress = ({ puzzleId=1 }) => {
+const CompletionProgress = ({ puzzleId, isMobile }) => {
   if (puzzleId < 0) puzzleId = 0; // Ensure non-negative
   const puzzlesPerLevel = 10;
   const indexInLevel = ((puzzleId - 1) % puzzlesPerLevel); // 0..9
@@ -8,12 +8,13 @@ const CompletionProgress = ({ puzzleId=1 }) => {
   return (
     <div
       style={{
+        //border: "2px solid red",
         width: "100%",
-        height: "6px",
+        height: isMobile ? "10px" : "14px",
         backgroundColor: "#b18489ff",
         position: "relative",
-        borderRadius: "3px",
-        marginBottom: "15px", // change depending on localhost or vercel
+        borderRadius: "7px",
+        marginBottom: isMobile ? "5px" : "15px", // change depending on localhost or vercel
       }}
     >
       <div
@@ -21,7 +22,7 @@ const CompletionProgress = ({ puzzleId=1 }) => {
           height: "100%",
           width: `${progressPercentage}%`,
           backgroundColor: "#23beb3ff",
-          borderRadius: "3px",
+          borderRadius: "7px",
           transition: "width 0.3s ease",
         }}
       />
@@ -29,9 +30,9 @@ const CompletionProgress = ({ puzzleId=1 }) => {
         style={{
           position: "absolute",
           left: `${progressPercentage}%`,
-          top: "-12px",
+          top: "-4px",
           transform: "translateX(-50%)",
-          fontSize: "20px",
+          fontSize: "21px",
           color: "#2e4c3eff",
           lineHeight: "1",
         }}

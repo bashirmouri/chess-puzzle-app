@@ -52,8 +52,8 @@ function PuzzlePage() {
   const [puzzlesWithSolutionViewed, setPuzzlesWithSolutionViewed] = useState(
     new Set()
   ); //track which puzzles used hint, and not count score
-  const [boardWidth, setBoardWidth] = useState(getBoardWidth());
-
+  const [boardWidth, setBoardWidth] = useState(getBoardWidth());// responsive board size
+  const isMobile = window.innerWidth < 768;
 
   function handleMove(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
@@ -192,7 +192,7 @@ function PuzzlePage() {
 
     // If a piece is already selected, try to move it
     if (selectedSquare) {
-      setAnimationDuration(300); 
+      setAnimationDuration(300);
       handleMove(selectedSquare, square);
       setSelectedSquare(null); // deselect after trying move
       setMoveSquares({}); // remove highlights after move
@@ -208,16 +208,16 @@ function PuzzlePage() {
   };
 
   function onPieceDragBegin(piece, sourceSquare) {
-  const game = new Chess(fen);
-  if (game.get(sourceSquare)) {
-    setSelectedSquare(sourceSquare);
-    setMoveSquares(getLegalMoveSquares(fen, sourceSquare)); // highlight legal moves
-  }
+    const game = new Chess(fen);
+    if (game.get(sourceSquare)) {
+      setSelectedSquare(sourceSquare);
+      setMoveSquares(getLegalMoveSquares(fen, sourceSquare)); // highlight legal moves
+    }
   }
 
   function getBoardWidth() {
     const width = window.innerWidth;
-    console.log(width);
+    //console.log(width);
     return width < 768 ? width * 0.9 : 500; // mobile 70%, desktop 500px
   }
 
@@ -285,7 +285,6 @@ function PuzzlePage() {
         // Normal puzzle loading
         console.log("Env vars:", import.meta.env.VITE_APP_API_URL);
 
-
         setFen(res.data.fen);
         setSolutionMoves(res.data.solution_moves);
         setCurrentStep(0);
@@ -336,7 +335,7 @@ function PuzzlePage() {
     setHighscore(loadHighscore());
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       setBoardWidth(getBoardWidth());
     };
@@ -372,7 +371,7 @@ function PuzzlePage() {
       </div>
     );
   }
-
+  
   if (puzzleId > 1 && showLevelScorePage) {
     return (
       <LevelScorePage
@@ -383,6 +382,7 @@ function PuzzlePage() {
         bestLevelStreak={bestLevelStreak}
         numPuzzlesSolved={numPuzzlesSolvedLevel}
         onContinueToNextLevel={handleContinueToNextLevel}
+        isMobile = {isMobile}
       />
     );
   }
@@ -397,190 +397,176 @@ function PuzzlePage() {
         bestStreak={bestStreak}
         numPuzzlesSolved={completedPuzzles.size}
         onPlayAgain={handlePlayAgain}
+        isMobile={isMobile}
       />
     );
   }
 
-  const isMobile = window.innerWidth < 768;
-
-  return (
-    <div
-      style={{
-        border: "2px solid red",
-        height: isMobile ? "100%" : "100vh",
-        width: isMobile ? "100%" : "100vw",
-        minHeight: isMobile ? "100dvh" : "100vh",
-        backgroundImage: "url(/background.jpg)",
-        backgroundSize: "100% 100%",
-        backgroundPosition: "center",
-        padding: "20px",
-      }}
-    >
-      {showInstructions && !gameStarted && (
-        <InstructionsModal
-          onClose={() => {
-            setShowInstructions(false);
-            setGameStarted(true);
-          }}
-        />
-      )}
-
-      {/* Top Stats Row */}
+  if (isMobile) {
+    // Mobile-specific styles or logic
+    return (
       <div
         style={{
-          //border: "2px solid red",
+          height: "100vh",
+          width: "100%",
+          backgroundImage: "url(/background-mobile.jpeg)",
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
           display: "flex",
-          justifyContent: "space-evenly", // Spreads items across full width
-          alignItems: "center",
-          width: "100%", // Ensure full width for spacing
-          marginBottom: "15px",
-          gap: "20px", // Minimum gap between items
-          flexWrap: "wrap", // Wrap to next line on small screens
+          justifyContent: "space-between",
+          flexDirection: "column",
+          padding: "10px",
+          boxSizing: "border-box",
         }}
       >
-        {/* Time Container */}
+          {showInstructions && !gameStarted && (
+          <InstructionsModal
+            onClose={() => {
+              setShowInstructions(false);
+              setGameStarted(true);
+            }}
+          />
+        )}
+        {/* Top Stats Row - Time Score Streak */}
         <div
           style={{
-            backgroundColor: "#5e3a20ff",
-            padding: "15px 25px",
-            borderRadius: "15px",
-            color: "#fdc298ff",
-            fontWeight: "bold",
-            fontSize: "18px",
-            flexShrink: 0, // Prevent shrinking
-          }}
-        >
-          Time: {formatTime(time)}
-        </div>
-
-        {/* Streak */}
-        <div
-          style={{
-            backgroundColor: streak > 0 ? "#e1440bff" : "#5e3a20ff",
-            minWidth: "100px",
-            height: "60px",
-            borderRadius: "15px",
             display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            justifyContent: "center",
-            color: "#fff",
-            fontWeight: "bold",
-            fontSize: "18px",
-            boxShadow:
-              streak > 0 ? "0px 0px 15px 5px rgba(205, 59, 7, 0.66)" : "none",
-            transition: "all 0.3s ease",
+            width: "100%",
+            marginBottom: "15px",
+            gap: "15px",
           }}
         >
-          Streak: {streak}
-        </div>
-
-        {/* Score */}
-        <div
-          style={{
-            backgroundColor: "#9158e5ff",
-            minWidth: "120px",
-            height: "60px",
-            borderRadius: "15px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#401c02ff",
-            fontWeight: "bold",
-            fontSize: "18px",
-            boxShadow: "0px 0px 20px 5px rgba(71, 27, 129, 0.7)",
-            transition: "all 0.3s ease",
-          }}
-        >
-          Score: {score}
-        </div>
-
-        {/* Number of Tries */}
-        <div
-          style={{
-            backgroundColor: "#5e3a20ff",
-            padding: "15px 25px",
-            borderRadius: "15px",
-            color: "#fdc298ff",
-            fontWeight: "bold",
-            fontSize: "18px",
-            flexShrink: 0, // Prevent shrinking
-          }}
-        >
-          Tries: {tries}
-        </div>
-
-        <div
-          style={{
-            backgroundColor: "#5e3a20ff",
-            padding: "15px 25px",
-            borderRadius: "15px",
-            color: "#fdc298ff",
-            fontWeight: "bold",
-            fontSize: "18px",
-            flexShrink: 0, // Prevent shrinking
-            transform: animateLevel ? "scale(1.3)" : "scale(1)",
-            boxShadow: animateLevel
-              ? "0 0 20px 5px rgba(129, 77, 21, 0.8)"
-              : "none",
-            transition: "all 0.5s ease-in-out",
-          }}
-        >
-          Level: {level}
-        </div>
-
-        {/* Puzzle Number */}
-        <div
-          style={{
-            backgroundColor: "#5e3a20ff",
-            padding: "15px 25px",
-            borderRadius: "15px",
-            color: "#fdc298ff",
-            fontWeight: "bold",
-            fontSize: "18px",
-            flexShrink: 0, // Prevent shrinking
-          }}
-        >
-          Puzzle: {puzzleId}
-        </div>
-      </div>
-
-      <CompletionProgress puzzleId={puzzleId} />
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          border: "2px solid green",
-          width: "100%", // makes it stretch to full screen
-        }}
-      >
-        <div
-          style={{
-            //border: "2px solid red",
-            display: "flex", // align self works only for one child in flexbox
-          }}
-        >
-          <button
-            onClick={goToPreviousCombination}
+          {/* Time */}
+          <div
             style={{
-              alignSelf: "flex-end",
-              color: "#5e3a20ff",
-              backgroundColor: "#fdc298ff",
-              opacity: puzzleTransitioning ? 0.3 : 1,
-              pointerEvents: puzzleTransitioning ? "none" : "auto",
-              transition: "opacity 0.3s ease",
+              backgroundColor: "#322319ff",
+              padding: "5px 5px",
+              borderRadius: "15px",
+              color: "#ad8f7aff",
               fontWeight: "bold",
+              fontSize: "16px",
+              flex: 1,
+              textAlign: "center",
             }}
           >
-            Previous
-          </button>
+            {formatTime(time)}
+          </div>
+
+            <div
+            style={{
+              backgroundColor: "#322319ff",
+              padding: "5px 5px",
+              borderRadius: "15px",
+              color: "#ad8f7aff",
+              fontWeight: "bold",
+              fontSize: "16px",
+              flex: 1,
+              textAlign: "center",
+            }}
+          >
+            {score}
+          </div>
+
+          {/* Streak */}
+          <div
+            style={{
+              backgroundColor: streak > 0 ? "#e1440bff" : "#322319ff",
+              padding: "5px 5px",
+              borderRadius: "15px",
+              color: "#fff",
+              fontWeight: "bold",
+              fontSize: "16px",
+              flex: 1,
+              textAlign: "center",
+              boxShadow:
+                streak > 0 ? "0px 0px 15px 5px rgba(205, 59, 7, 0.66)" : "none",
+              transition: "all 0.3s ease",
+            }}
+          >
+            🔥 {streak}
+          </div>
         </div>
-        {/* Chessboard area - this will take remaining space */}
+
+        {/* Second Stats Row - Tries PuzzleLevel PuzzleNumber */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+            marginBottom: "20px",
+            gap: "15px",
+          }}
+        >
+          {/* numsolved */}
+          <div
+            style={{
+              backgroundColor: "#322319ff",
+              padding: "5px 5px",
+              borderRadius: "15px",
+              color: "#ad8f7aff",
+              fontWeight: "bold",
+              fontSize: "16px",
+              flex: 1,
+              textAlign: "center",
+            }}
+          >
+            {puzzleId}/50
+          </div>
+
+            <div
+            style={{
+              backgroundColor: "#322319ff",
+              padding: "5px 5px",
+              borderRadius: "15px",
+              color: "#ad8f7aff",
+              fontWeight: "bold",
+              fontSize: "16px",
+              flex: 1,
+              textAlign: "center",
+            }}
+          >
+            ❌ {tries}
+          </div>
+          {/* Level */}
+          <div
+                      style={{
+              backgroundColor: "#322319ff",
+              padding: "5px 5px",
+              borderRadius: "15px",
+              color: "#ad8f7aff",
+              fontWeight: "bold",
+              fontSize: "16px",
+              flex: 1,
+              textAlign: "center",
+            }}
+          >
+            Level {level}
+
+          </div>
+        </div>
+       
+
+        {/* Completion Progress Bar */}
+        <div
+          style={{
+            width: "100%",
+            marginTop: "15px",
+          }}
+        >
+          <CompletionProgress puzzleId={puzzleId} isMobile={isMobile} />
+        </div>
+
+        {/* Chessboard - Full Width */}
         <div
           style={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            flex: 1,
+            width: "100%",
           }}
         >
           <Chessboard
@@ -589,119 +575,378 @@ function PuzzlePage() {
             onSquareClick={onSquareClick}
             onPieceDragBegin={onPieceDragBegin}
             customSquareStyles={moveSquares}
-            boardWidth={ boardWidth } // for tel // change
+            boardWidth={window.innerWidth - 20} // Full width minus padding
             animationDuration={animationDuration}
             customDarkSquareStyle={{ backgroundColor: "#5c907bff" }}
             customLightSquareStyle={{ backgroundColor: "#d9f0e1" }}
             customBoardStyle={{
               borderRadius: "10px",
-              boxShadow: "0 50px 20px rgba(0,0,0,0.4)",
+              boxShadow: "0 20px 15px rgba(0,0,0,0.4)",
             }}
           />
         </div>
 
+        {/* Buttons Row */}
+        <div style={{display: "flex", justifyContent: "space-between" }}>
+          <button
+              onClick={goToPreviousCombination}
+              style={{
+                
+                color: "#5e3a20ff",
+                backgroundColor: "#fdc298ff",
+                opacity: puzzleTransitioning ? 0.3 : 1,
+                pointerEvents: puzzleTransitioning ? "none" : "auto",
+                transition: "opacity 0.3s ease",
+                fontWeight: "bold",
+                padding: "5px 20px",
+              }}
+            >
+              🢀
+            </button>
+                  <button
+              onClick={() =>
+                showSolution(
+                  solutionMoves,
+                  puzzleId,
+                  setPuzzlesWithSolutionViewed,
+                  setStreak
+                )
+              }
+              style={{
+                
+                color: "#d4cfcbff",
+                backgroundColor: "#654d3cff",
+                opacity: puzzleTransitioning ? 0.3 : 1,
+                pointerEvents: puzzleTransitioning ? "none" : "auto",
+                transition: "opacity 0.3s ease",
+                fontWeight: "bold",
+                padding: "5px 20px",
+              }}
+            >
+              Solution
+            </button>
+            <button
+              onClick={goToNextCombination}
+              style={{
+                
+                color: "#5e3a20ff",
+                backgroundColor: "#fdc298ff",
+                opacity: puzzleTransitioning ? 0.3 : 1,
+                pointerEvents: puzzleTransitioning ? "none" : "auto",
+                transition: "opacity 0.3s ease",
+                fontWeight: "bold",
+                padding: "5px 20px",
+              }}
+            >
+              🢂
+            </button>
+        </div>
+
+      </div>
+    );
+  } else {
+    return (
+      <div
+        style={{
+          //border: "2px solid red",
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          justifyContent: "space-around",
+          flexDirection: "column",
+          backgroundImage: "url(/background.jpg)",
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
+          padding: "20px",
+        }}
+      >
+        {showInstructions && !gameStarted && (
+          <InstructionsModal
+            onClose={() => {
+              setShowInstructions(false);
+              setGameStarted(true);
+            }}
+          />
+        )}
+
+        {/* Top Stats Row */}
         <div
           style={{
             //border: "2px solid red",
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
+            justifyContent: "space-evenly", // Spreads items across full width
+            alignItems: "center",
+            width: "100%", // Ensure full width for spacing
+            marginBottom: "15px",
+            gap: "20px", // Minimum gap between items
+            flexWrap: "wrap", // Wrap to next line on small screens
           }}
         >
-          <button
-            onClick={() =>
-              showSolution(
-                solutionMoves,
-                puzzleId,
-                setPuzzlesWithSolutionViewed,
-                setStreak
-              )
-            }
+          {/* Time Container */}
+          <div
             style={{
-              alignSelf: "flex-end",
-              color: "#0c163aff",
-              backgroundColor: "#24769fff",
-              opacity: puzzleTransitioning ? 0.3 : 1,
-              pointerEvents: puzzleTransitioning ? "none" : "auto",
-              transition: "opacity 0.3s ease",
+              backgroundColor: "#5e3a20ff",
+              padding: "15px 25px",
+              borderRadius: "15px",
+              color: "#fdc298ff",
               fontWeight: "bold",
-              padding: "7px 15px",
+              fontSize: "18px",
+              flexShrink: 0, // Prevent shrinking
             }}
           >
-            Solution
-          </button>
-          <button
-            onClick={goToNextCombination}
+            Time: {formatTime(time)}
+          </div>
+
+          {/* Streak */}
+          <div
             style={{
-              alignSelf: "flex-start",
-              color: "#5e3a20ff",
-              backgroundColor: "#fdc298ff",
-              opacity: puzzleTransitioning ? 0.3 : 1,
-              pointerEvents: puzzleTransitioning ? "none" : "auto",
-              transition: "opacity 0.3s ease",
+              backgroundColor: streak > 0 ? "#e1440bff" : "#5e3a20ff",
+              minWidth: "100px",
+              height: "60px",
+              borderRadius: "15px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
               fontWeight: "bold",
-              padding: "9px 30px",
+              fontSize: "18px",
+              boxShadow:
+                streak > 0 ? "0px 0px 15px 5px rgba(205, 59, 7, 0.66)" : "none",
+              transition: "all 0.3s ease",
             }}
           >
-            Skip
-          </button>
+            Streak: {streak}
+          </div>
+
+          {/* Score */}
+          <div
+            style={{
+              backgroundColor: "#9158e5ff",
+              minWidth: "120px",
+              height: "60px",
+              borderRadius: "15px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#401c02ff",
+              fontWeight: "bold",
+              fontSize: "18px",
+              boxShadow: "0px 0px 20px 5px rgba(71, 27, 129, 0.7)",
+              transition: "all 0.3s ease",
+            }}
+          >
+            Score: {score}
+          </div>
+
+          {/* Number of Tries */}
+          <div
+            style={{
+              backgroundColor: "#5e3a20ff",
+              padding: "15px 25px",
+              borderRadius: "15px",
+              color: "#fdc298ff",
+              fontWeight: "bold",
+              fontSize: "18px",
+              flexShrink: 0, // Prevent shrinking
+            }}
+          >
+            Tries: {tries}
+          </div>
+
+          <div
+            style={{
+              backgroundColor: "#5e3a20ff",
+              padding: "15px 25px",
+              borderRadius: "15px",
+              color: "#fdc298ff",
+              fontWeight: "bold",
+              fontSize: "18px",
+              flexShrink: 0, // Prevent shrinking
+              transform: animateLevel ? "scale(1.3)" : "scale(1)",
+              boxShadow: animateLevel
+                ? "0 0 20px 5px rgba(129, 77, 21, 0.8)"
+                : "none",
+              transition: "all 0.5s ease-in-out",
+            }}
+          >
+            Level: {level}
+          </div>
+
+          {/* Puzzle Number */}
+          <div
+            style={{
+              backgroundColor: "#5e3a20ff",
+              padding: "15px 25px",
+              borderRadius: "15px",
+              color: "#fdc298ff",
+              fontWeight: "bold",
+              fontSize: "18px",
+              flexShrink: 0, // Prevent shrinking
+            }}
+          >
+            Puzzle: {puzzleId}
+          </div>
+        </div>
+
+        <CompletionProgress puzzleId={puzzleId} />
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            //border: "2px solid green",
+            width: "100%", // makes it stretch to full screen
+          }}
+        >
+          <div
+            style={{
+              //border: "2px solid red",
+              display: "flex", // align self works only for one child in flexbox
+            }}
+          >
+            <button
+              onClick={goToPreviousCombination}
+              style={{
+                alignSelf: "flex-end",
+                color: "#5e3a20ff",
+                backgroundColor: "#fdc298ff",
+                opacity: puzzleTransitioning ? 0.3 : 1,
+                pointerEvents: puzzleTransitioning ? "none" : "auto",
+                transition: "opacity 0.3s ease",
+                fontWeight: "bold",
+              }}
+            >
+              Previous
+            </button>
+          </div>
+          {/* Chessboard area - this will take remaining space */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Chessboard
+              position={fen}
+              onPieceDrop={onDrop}
+              onSquareClick={onSquareClick}
+              onPieceDragBegin={onPieceDragBegin}
+              customSquareStyles={moveSquares}
+              boardWidth={boardWidth} // for tel // change
+              animationDuration={animationDuration}
+              customDarkSquareStyle={{ backgroundColor: "#5c907bff" }}
+              customLightSquareStyle={{ backgroundColor: "#d9f0e1" }}
+              customBoardStyle={{
+                borderRadius: "10px",
+                boxShadow: "0 50px 20px rgba(0,0,0,0.4)",
+              }}
+            />
+          </div>
+
+          <div
+            style={{
+              //border: "2px solid red",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <button
+              onClick={() =>
+                showSolution(
+                  solutionMoves,
+                  puzzleId,
+                  setPuzzlesWithSolutionViewed,
+                  setStreak
+                )
+              }
+              style={{
+                alignSelf: "flex-end",
+                color: "#0c163aff",
+                backgroundColor: "#24769fff",
+                opacity: puzzleTransitioning ? 0.3 : 1,
+                pointerEvents: puzzleTransitioning ? "none" : "auto",
+                transition: "opacity 0.3s ease",
+                fontWeight: "bold",
+                padding: "7px 15px",
+              }}
+            >
+              Solution
+            </button>
+            <button
+              onClick={goToNextCombination}
+              style={{
+                alignSelf: "flex-start",
+                color: "#5e3a20ff",
+                backgroundColor: "#fdc298ff",
+                opacity: puzzleTransitioning ? 0.3 : 1,
+                pointerEvents: puzzleTransitioning ? "none" : "auto",
+                transition: "opacity 0.3s ease",
+                fontWeight: "bold",
+                padding: "9px 30px",
+              }}
+            >
+              Skip
+            </button>
+          </div>
+        </div>
+
+        {/* Additional Chess Pieces scattered around */}
+        <div
+          style={{
+            position: "absolute",
+            top: "15%",
+            left: "10%",
+            fontSize: "60px",
+            opacity: "0.3",
+            transform: "rotate(45deg)",
+          }}
+        >
+          ♕
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            top: "25%",
+            right: "15%",
+            fontSize: "50px",
+            opacity: "0.3",
+            transform: "rotate(-60deg)",
+          }}
+        >
+          ♖
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            bottom: "15%",
+            left: "20%",
+            fontSize: "70px",
+            opacity: "0.3",
+            transform: "rotate(20deg)",
+          }}
+        >
+          ♘
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            bottom: "20%",
+            right: "20%",
+            fontSize: "55px",
+            opacity: "0.3",
+            transform: "rotate(-45deg)",
+          }}
+        >
+          ♗
         </div>
       </div>
-
-      {/* Additional Chess Pieces scattered around */}
-      <div
-        style={{
-          position: "absolute",
-          top: "15%",
-          left: "10%",
-          fontSize: "60px",
-          opacity: "0.3",
-          transform: "rotate(45deg)",
-        }}
-      >
-        ♕
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          top: "25%",
-          right: "15%",
-          fontSize: "50px",
-          opacity: "0.3",
-          transform: "rotate(-60deg)",
-        }}
-      >
-        ♖
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          bottom: "15%",
-          left: "20%",
-          fontSize: "70px",
-          opacity: "0.3",
-          transform: "rotate(20deg)",
-        }}
-      >
-        ♘
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          bottom: "20%",
-          right: "20%",
-          fontSize: "55px",
-          opacity: "0.3",
-          transform: "rotate(-45deg)",
-        }}
-      >
-        ♗
-      </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default PuzzlePage;

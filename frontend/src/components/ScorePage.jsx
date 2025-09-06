@@ -7,6 +7,7 @@ const ScorePage = ({
   bestStreak,
   numPuzzlesSolved,
   onPlayAgain,
+  isMobile,
 }) => {
   // Calculate some achievements
 
@@ -31,7 +32,9 @@ const ScorePage = ({
       style={{
         height: "100vh",
         width: "100vw",
-        backgroundImage: "url(/background.jpg)",
+        backgroundImage: isMobile
+          ? "url(/background-mobile.jpeg)"
+          : "url(/background.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         padding: "20px",
@@ -42,10 +45,12 @@ const ScorePage = ({
     >
       <div
         style={{
-          backgroundColor: "rgba(245, 233, 218, 0.95)", 
+          backgroundColor: "rgba(245, 233, 218, 0.95)",
           padding: "20px 30px",
           borderRadius: "20px",
           height: "70vh",
+          width: isMobile ? "90vw" : "auto",
+
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-around",
@@ -59,10 +64,10 @@ const ScorePage = ({
             fontSize: "25px",
             border: `4px solid`,
             borderColor: rating.color,
-            backgroundColor: "#f7e0a7ff", 
+            backgroundColor: "#f7e0a7ff",
             padding: "20px 25px",
             borderRadius: "12px",
-            color: "#6d6c32ff", 
+            color: "#6d6c32ff",
           }}
         >
           Rating: {rating.text}
@@ -106,7 +111,7 @@ const ScorePage = ({
         <div
           style={{
             backgroundColor: "#F0EBE3", // Soft beige background
-            padding: "20px 25px",
+            padding: isMobile ? "15px 15px" : "20px 25px",
             borderRadius: "15px",
             display: "flex",
             flexDirection: "row",
@@ -131,7 +136,7 @@ const ScorePage = ({
               backgroundColor: "#ffd4cbff",
               padding: "15px 20px",
               borderRadius: "12px",
-              color: "#A33E2E", 
+              color: "#A33E2E",
             }}
           >
             Best streak: {bestStreak}
@@ -139,10 +144,10 @@ const ScorePage = ({
 
           <div
             style={{
-              backgroundColor: "#b8dbb8ff", 
+              backgroundColor: "#b8dbb8ff",
               padding: "15px 20px",
               borderRadius: "12px",
-              color: "#2F5233", 
+              color: "#2F5233",
             }}
           >
             Puzzles solved: {numPuzzlesSolved}/50
@@ -200,7 +205,7 @@ const ScorePage = ({
       >
         ♔
       </div>
-      
+
       <div
         style={{
           position: "absolute",
@@ -214,7 +219,7 @@ const ScorePage = ({
       >
         ♕
       </div>
-      
+
       <div
         style={{
           position: "absolute",
@@ -228,7 +233,7 @@ const ScorePage = ({
       >
         ♖
       </div>
-      
+
       <div
         style={{
           position: "absolute",

@@ -1,12 +1,12 @@
-function InstructionsModal({ onClose }) {
+function InstructionsModal({ onClose, isMobile }) {
   return (
     <div
       style={{
         position: "fixed",
         top: 0,
         left: 0,
-        width: "100vw",
-        height: "100vh",
+        width: isMobile ? "50vw" : "100vw",
+        height: isMobile ? "50vh" : "100vh",
         backgroundColor: "rgba(0,0,0,0.7)",
         display: "flex",
         justifyContent: "center",
