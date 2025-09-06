@@ -413,7 +413,7 @@ function PuzzlePage() {
           backgroundSize: "100% 100%",
           backgroundPosition: "center",
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "space-around",
           flexDirection: "column",
           padding: "10px",
           boxSizing: "border-box",
@@ -601,7 +601,7 @@ function PuzzlePage() {
                 padding: "5px 20px",
               }}
             >
-              🢀
+              ◀
             </button>
                   <button
               onClick={() =>
@@ -638,7 +638,7 @@ function PuzzlePage() {
                 padding: "5px 20px",
               }}
             >
-              🢂
+              ▶
             </button>
         </div>
 
