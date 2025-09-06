@@ -587,7 +587,7 @@ function PuzzlePage() {
         </div>
 
         {/* Buttons Row */}
-        <div style={{display: "flex", justifyContent: "space-between", marginBottom: "50px"}}>
+        <div style={{display: "flex", justifyContent: "space-between", marginBottom: "120px"}}>
           <button
               onClick={goToPreviousCombination}
               style={{
