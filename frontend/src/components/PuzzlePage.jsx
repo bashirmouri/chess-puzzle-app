@@ -54,6 +54,7 @@ function PuzzlePage() {
   ); //track which puzzles used hint, and not count score
   const [boardWidth, setBoardWidth] = useState(getBoardWidth());// responsive board size
   const isMobile = window.innerWidth < 768;
+  const [showPreviousButton, setShowPreviousButton] = useState(false);
 
   function handleMove(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
@@ -270,6 +271,7 @@ function PuzzlePage() {
   useEffect(() => {
     setPuzzleNotFound(false); // Reset on puzzle change
     setPuzzleTransitioning(false);
+    if (puzzleId % 10 === 1) { setShowPreviousButton(false); } else {setShowPreviousButton(true);}
     axios
       .get(`${import.meta.env.VITE_APP_API_URL}/api/puzzle/today/${puzzleId}`)
       .then((res) => {
@@ -810,8 +812,8 @@ function PuzzlePage() {
                 alignSelf: "flex-end",
                 color: "#5e3a20ff",
                 backgroundColor: "#fdc298ff",
-                opacity: puzzleTransitioning ? 0.3 : 1,
-                pointerEvents: puzzleTransitioning ? "none" : "auto",
+                opacity: puzzleTransitioning || !showPreviousButton ? 0.3 : 1,
+                pointerEvents: puzzleTransitioning || !showPreviousButton ? "none" : "auto",
                 transition: "opacity 0.3s ease",
                 fontWeight: "bold",
               }}
