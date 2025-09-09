@@ -105,8 +105,9 @@ const LevelScorePage = ({
         >
           <div
             style={{
+              border: `2px solid #2C3E50`, // Dark slate border
               backgroundColor: "#cdcbe4ff", // Muted stone
-              padding: "15px 20px",
+              padding: "15px 15px",
               borderRadius: "12px",
               color: "#2C3E50", // Dark slate
             }}
@@ -116,8 +117,9 @@ const LevelScorePage = ({
 
           <div
             style={{
+              border: `2px solid #A33E2E`, // Terracotta border
               backgroundColor: "#ffd4cbff",
-              padding: "15px 20px",
+              padding: "15px 15px",
               borderRadius: "12px",
               color: "#A33E2E", 
             }}
@@ -127,8 +129,9 @@ const LevelScorePage = ({
 
           <div
             style={{
+              border: `2px solid #2F5233`, // Forest green border
               backgroundColor: "#b8dbb8ff", 
-              padding: "15px 20px",
+              padding: "15px 15px",
               borderRadius: "12px",
               color: "#2F5233", 
             }}
