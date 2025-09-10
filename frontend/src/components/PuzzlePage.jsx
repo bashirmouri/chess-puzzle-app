@@ -596,8 +596,8 @@ function PuzzlePage() {
                 
                 color: "#5e3a20ff",
                 backgroundColor: "#fdc298ff",
-                opacity: puzzleTransitioning ? 0.3 : 1,
-                pointerEvents: puzzleTransitioning ? "none" : "auto",
+                opacity: puzzleTransitioning || !showPreviousButton ? 0.3 : 1,
+                pointerEvents: puzzleTransitioning || !showPreviousButton ? "none" : "auto",
                 transition: "opacity 0.3s ease",
                 fontWeight: "bold",
                 padding: "5px 20px",

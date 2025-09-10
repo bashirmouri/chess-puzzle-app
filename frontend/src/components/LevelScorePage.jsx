@@ -48,7 +48,7 @@ const LevelScorePage = ({
             border: `4px solid`,
             borderColor: "gold",
             backgroundColor: "#f1ddabff", 
-            padding: "20px 25px",
+            padding: "15px 20px",
             borderRadius: "12px",
             color: "#5a5930ff", 
           }}
@@ -94,11 +94,11 @@ const LevelScorePage = ({
         <div
           style={{
             backgroundColor: "#F0EBE3", // Soft beige background
-            padding: isMobile ? "15px 15px" : "20px 25px",
+            padding: isMobile ? "10px 10px" : "20px 25px",
             borderRadius: "15px",
             display: "flex",
             flexDirection: "row",
-            columnGap: "15px",
+            columnGap: "5px",
             fontWeight: "bold",
             fontSize: "25px",
           }}
