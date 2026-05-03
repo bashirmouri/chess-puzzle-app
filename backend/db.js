@@ -1,11 +1,17 @@
-const { Pool } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL.includes("neon.tech")
-    ? { rejectUnauthorized: false }
-    : false,
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error(
+    "SUPABASE_URL or SUPABASE_KEY is not set. Add them to your environment or a .env file in backend/."
+  );
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: { persistSession: false },
 });
 
-module.exports = pool;
+module.exports = supabase;

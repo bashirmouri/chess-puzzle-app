@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const pool = require('./db');
+const supabase = require('./db');
 require('dotenv').config();
 
 const app = express();
@@ -13,27 +13,50 @@ app.use(cors({
 
 app.use(express.json());
 
+const logDbError = (err) => {
+  console.error("DB error:", {
+    message: err.message,
+    code: err.code,
+    detail: err.details,
+    hint: err.hint,
+  });
+};
+
+(async () => {
+  const { error } = await supabase
+    .from('puzzles')
+    .select('id', { head: true })
+    .limit(1);
+
+  if (error) {
+    console.error("DB connection failed");
+    logDbError(error);
+    return;
+  }
+
+  console.log("DB connected");
+})();
+
   app.get('/api/puzzle/today/:puzzleId', async (req, res) => { 
   const puzzleId = req.params.puzzleId; // this is the puzzle id
   try {
     //console.log("Requested puzzle id:", puzzleId);
 
-    const result = await pool.query(
-      'SELECT fen, solution_moves, level FROM puzzles WHERE id = $1',
-      [puzzleId]
-    ); // $1 to prevent SQL injection
+    const { data, error } = await supabase
+      .from('puzzles')
+      .select('fen, solution_moves, level')
+      .eq('id', puzzleId)
+      .single();
 
-    // log the raw DB result
-    //console.log("Database result:", result.rows);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Puzzle not found' });
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return res.status(404).json({ error: 'Puzzle not found' });
+      }
+      logDbError(error);
+      return res.status(500).json({ error: 'Server error' });
     }
 
-    // log the actual row being sent back
-    //console.log("Sending back puzzle:", result.rows[0]);
-
-    res.status(200).json(result.rows[0]);
+    res.status(200).json(data);
   } catch (err) {
     console.error("Error fetching puzzle:", err);
     res.status(500).json({ error: 'Server error' });

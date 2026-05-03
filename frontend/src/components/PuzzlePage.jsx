@@ -18,6 +18,28 @@ import { playCorrect } from "../utils/sound";
 import { playMove } from "../utils/sound";
 import { playCheck } from "../utils/sound";
 
+const normalizeSolutionMoves = (value) => {
+  if (Array.isArray(value)) {
+    return value;
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (trimmed.length === 0) {
+      return [];
+    }
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch (error) {
+      // Fall through to whitespace split.
+    }
+    return trimmed.split(/\s+/).filter(Boolean);
+  }
+  return [];
+};
+
 function PuzzlePage() {
   const [fen, setFen] = useState("");
   const [loading, setLoading] = useState(true);
@@ -88,6 +110,11 @@ function PuzzlePage() {
       solutionMoves[currentStep]
     ); shows correct move in console*/
     // remove this during export
+
+    if (!solutionMoves || solutionMoves.length === 0) {
+      setError("Puzzle data missing solution moves.");
+      return false;
+    }
 
     if (playerMove === solutionMoves[currentStep]) {
       const nextStep = currentStep + 1;
@@ -275,7 +302,7 @@ function PuzzlePage() {
     axios
       .get(`${import.meta.env.VITE_APP_API_URL}/api/puzzle/today/${puzzleId}`)
       .then((res) => {
-        //console.log("API response:", res.data);
+        console.log("API response:", res.status, res.data);
 
         // Check if database returned empty array
         if (Array.isArray(res.data) && res.data.length === 0) {
@@ -287,8 +314,15 @@ function PuzzlePage() {
         // Normal puzzle loading
         console.log("Env vars:", import.meta.env.VITE_APP_API_URL);
 
+        const moves = normalizeSolutionMoves(res.data.solution_moves);
+        if (moves.length === 0) {
+          setError("Puzzle data missing solution moves.");
+          setLoading(false);
+          return;
+        }
+
         setFen(res.data.fen);
-        setSolutionMoves(res.data.solution_moves);
+        setSolutionMoves(moves);
         setCurrentStep(0);
         setSolution(res.data.solution_move);
         setLevel(res.data.level);
@@ -297,7 +331,7 @@ function PuzzlePage() {
         setMoveSquares({});
       })
       .catch((err) => {
-        console.log("API error:", err.response?.status);
+        console.log("API error:", err.response?.status, err.response?.data);
 
         // If it's a 404 error, the puzzle doesn't exist
         if (err.response?.status === 404) {
