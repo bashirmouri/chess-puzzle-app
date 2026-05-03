@@ -77,6 +77,24 @@ function PuzzlePage() {
   const [boardWidth, setBoardWidth] = useState(getBoardWidth());// responsive board size
   const isMobile = window.innerWidth < 768;
   const [showPreviousButton, setShowPreviousButton] = useState(false);
+  const loadingBoardSize = isMobile ? 200 : 260;
+  const loadingSquares = Array.from({ length: 64 }, (_, index) => {
+    const row = Math.floor(index / 8);
+    const col = index % 8;
+    const isDark = (row + col) % 2 === 1;
+    const delay = (row + col) * 0.06;
+
+    return (
+      <div
+        key={`loading-square-${index}`}
+        style={{
+          backgroundColor: isDark ? "#2f4f3c" : "#f5e7d1",
+          animation: "squarePulse 2.6s ease-in-out infinite",
+          animationDelay: `${delay}s`,
+        }}
+      />
+    );
+  });
 
   function handleMove(sourceSquare, targetSquare) {
     const gameCopy = new Chess(fen);
@@ -394,16 +412,212 @@ function PuzzlePage() {
         style={{
           height: "100vh",
           width: "100vw",
-          backgroundColor: "black",
+          backgroundImage:
+            "radial-gradient(120% 120% at 15% 10%, #f8e8cc 0%, #e9c58b 45%, #3a2a1c 100%)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          color: "white",
-          fontSize: "24px",
-          fontWeight: "bold",
+          color: "#1e1209",
+          fontFamily: "'Garamond', 'Palatino Linotype', serif",
+          overflow: "hidden",
         }}
       >
-        Loading...
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "16px",
+            padding: isMobile ? "20px" : "28px 36px",
+            borderRadius: "24px",
+            backgroundColor: "rgba(255, 255, 255, 0.18)",
+            border: "1px solid rgba(255, 255, 255, 0.35)",
+            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.35)",
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              width: loadingBoardSize,
+              height: loadingBoardSize,
+              display: "grid",
+              gridTemplateColumns: "repeat(8, 1fr)",
+              gridTemplateRows: "repeat(8, 1fr)",
+              borderRadius: "18px",
+              overflow: "hidden",
+              boxShadow: "0 18px 30px rgba(0, 0, 0, 0.4)",
+              border: "2px solid rgba(255, 255, 255, 0.5)",
+              backgroundColor: "#1f2b22",
+              "--square": `${loadingBoardSize / 8}px`,
+            }}
+          >
+            {loadingSquares}
+            <div
+              style={{
+                position: "absolute",
+                inset: "0",
+                background:
+                  "linear-gradient(130deg, rgba(255,255,255,0.08), rgba(255,255,255,0.28), rgba(255,255,255,0.08))",
+                animation: "sweep 3s ease-in-out infinite",
+                mixBlendMode: "screen",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "var(--square)",
+                height: "var(--square)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "calc(var(--square) * 0.9)",
+                color: "#2a1206",
+                textShadow: "0 6px 10px rgba(0,0,0,0.35)",
+                animation: "knightHop 3.2s ease-in-out infinite",
+              }}
+            >
+              ♞
+            </div>
+          </div>
+
+          <div
+            style={{
+              fontSize: isMobile ? "20px" : "24px",
+              fontWeight: "bold",
+              letterSpacing: "1px",
+              textTransform: "uppercase",
+            }}
+          >
+            Warming Up The Board
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              fontSize: "16px",
+              color: "#3a2a1c",
+            }}
+          >
+            <span>Bringing the puzzles online</span>
+            <span style={{ animation: "dotPulse 1.2s infinite" }}>.</span>
+            <span
+              style={{ animation: "dotPulse 1.2s infinite", animationDelay: "0.2s" }}
+            >
+              .
+            </span>
+            <span
+              style={{ animation: "dotPulse 1.2s infinite", animationDelay: "0.4s" }}
+            >
+              .
+            </span>
+          </div>
+
+          <div
+            style={{
+              width: isMobile ? "200px" : "260px",
+              height: "8px",
+              borderRadius: "999px",
+              backgroundColor: "rgba(255, 255, 255, 0.3)",
+              overflow: "hidden",
+              boxShadow: "inset 0 0 8px rgba(0,0,0,0.2)",
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                width: "45%",
+                borderRadius: "999px",
+                background: "linear-gradient(90deg, #f1c77a, #d28a34)",
+                animation: "progressSlide 2.2s ease-in-out infinite",
+              }}
+            />
+          </div>
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            top: "12%",
+            left: "8%",
+            fontSize: isMobile ? "42px" : "60px",
+            opacity: "0.18",
+            animation: "float 4s ease-in-out infinite",
+          }}
+        >
+          ♔
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            bottom: "15%",
+            right: "10%",
+            fontSize: isMobile ? "46px" : "64px",
+            opacity: "0.16",
+            animation: "float 5s ease-in-out infinite reverse",
+          }}
+        >
+          ♕
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            top: "18%",
+            right: "15%",
+            fontSize: isMobile ? "36px" : "50px",
+            opacity: "0.14",
+            animation: "float 4.5s ease-in-out infinite",
+          }}
+        >
+          ♖
+        </div>
+
+        <style>
+          {`
+            @keyframes squarePulse {
+              0%, 100% { filter: brightness(0.9); }
+              50% { filter: brightness(1.15); }
+            }
+
+            @keyframes sweep {
+              0% { transform: translateX(-60%); opacity: 0; }
+              45% { opacity: 0.6; }
+              100% { transform: translateX(60%); opacity: 0; }
+            }
+
+            @keyframes knightHop {
+              0% { transform: translate(calc(var(--square) * 0), calc(var(--square) * 1)); }
+              20% { transform: translate(calc(var(--square) * 2), calc(var(--square) * 2)); }
+              40% { transform: translate(calc(var(--square) * 4), calc(var(--square) * 1)); }
+              60% { transform: translate(calc(var(--square) * 5), calc(var(--square) * 3)); }
+              80% { transform: translate(calc(var(--square) * 3), calc(var(--square) * 4)); }
+              100% { transform: translate(calc(var(--square) * 1), calc(var(--square) * 3)); }
+            }
+
+            @keyframes dotPulse {
+              0%, 80%, 100% { opacity: 0.2; }
+              40% { opacity: 1; }
+            }
+
+            @keyframes progressSlide {
+              0% { transform: translateX(-40%); }
+              50% { transform: translateX(80%); }
+              100% { transform: translateX(-40%); }
+            }
+
+            @keyframes float {
+              0%, 100% { transform: translateY(0px) rotate(0deg); }
+              50% { transform: translateY(-18px) rotate(8deg); }
+            }
+          `}
+        </style>
       </div>
     );
   }
