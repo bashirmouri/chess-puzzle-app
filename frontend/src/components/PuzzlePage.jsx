@@ -520,6 +520,16 @@ function PuzzlePage() {
 
           <div
             style={{
+              fontSize: "14px",
+              color: "#5a4330",
+              fontStyle: "italic",
+            }}
+          >
+            The servers are waking up.
+          </div>
+
+          <div
+            style={{
               width: isMobile ? "200px" : "260px",
               height: "8px",
               borderRadius: "999px",

@@ -14,7 +14,7 @@ const CompletionProgress = ({ puzzleId, isMobile }) => {
         backgroundColor: "#b18489ff",
         position: "relative",
         borderRadius: "7px",
-        marginBottom: isMobile ? "5px" : "15px", // change depending on localhost or vercel
+        marginBottom: isMobile ? "5px" : "15px", // change depending on mobile or desktop
       }}
     >
       <div
